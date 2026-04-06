@@ -47,7 +47,6 @@ export default function Services() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Heading animation
       gsap.fromTo(
         headingRef.current,
         { opacity: 0, y: 60 },
@@ -63,7 +62,6 @@ export default function Services() {
         }
       );
 
-      // Cards stagger animation
       const cards = cardsRef.current?.children;
       if (cards) {
         gsap.fromTo(
@@ -88,6 +86,36 @@ export default function Services() {
     return () => ctx.revert();
   }, []);
 
+  // Vanilla tilt
+  useEffect(() => {
+    const cards = cardsRef.current?.querySelectorAll(".service-card");
+    if (!cards || cards.length === 0) return;
+
+    let VanillaTilt: typeof import("vanilla-tilt").default | null = null;
+
+    import("vanilla-tilt").then((mod) => {
+      VanillaTilt = mod.default;
+      cards.forEach((card) => {
+        VanillaTilt!.init(card as HTMLElement, {
+          max: 8,
+          speed: 400,
+          glare: true,
+          "max-glare": 0.15,
+          gyroscope: false,
+        });
+      });
+    });
+
+    return () => {
+      if (VanillaTilt) {
+        cards.forEach((card) => {
+          const el = card as HTMLElement & { vanillaTilt?: { destroy: () => void } };
+          el.vanillaTilt?.destroy();
+        });
+      }
+    };
+  }, []);
+
   return (
     <section
       ref={sectionRef}
@@ -107,12 +135,14 @@ export default function Services() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         <div className="flex flex-col lg:flex-row gap-16">
-          {/* Left side */}
-          <div ref={headingRef} className="lg:w-1/3 lg:sticky lg:top-32 lg:self-start">
+          <div
+            ref={headingRef}
+            className="lg:w-1/3 lg:sticky lg:top-32 lg:self-start"
+          >
             <span className="font-mono text-blue text-sm tracking-wider">
               01 / SERVICES
             </span>
-            <h2 className="font-anton text-[clamp(2.5rem,5vw,4rem)] uppercase leading-[0.95] mt-4 text-white">
+            <h2 className="font-anton text-[clamp(2.5rem,5vw,4rem)] uppercase leading-[0.95] mt-4 text-text">
               What We
               <br />
               <span className="text-blue">Build.</span>
@@ -123,7 +153,6 @@ export default function Services() {
             </p>
           </div>
 
-          {/* Right: Cards grid */}
           <div
             ref={cardsRef}
             className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4"
@@ -131,7 +160,8 @@ export default function Services() {
             {services.map((service) => (
               <div
                 key={service.num}
-                className="group bg-card border border-border p-6 hover:border-blue/30 transition-all duration-500 relative overflow-hidden"
+                className="service-card group bg-card border border-border p-6 hover:border-blue/30 transition-all duration-500 relative overflow-hidden"
+                style={{ transformStyle: "preserve-3d" }}
               >
                 <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <svg
@@ -152,7 +182,7 @@ export default function Services() {
                 <span className="font-mono text-blue/40 text-xs">
                   {service.num}
                 </span>
-                <h3 className="font-barlow font-semibold text-lg mt-3 text-white group-hover:text-blue transition-colors duration-300">
+                <h3 className="font-barlow font-semibold text-lg mt-3 text-text group-hover:text-blue transition-colors duration-300">
                   {service.title}
                 </h3>
                 <p className="text-offwhite text-sm mt-2 leading-relaxed">

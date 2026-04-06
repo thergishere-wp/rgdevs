@@ -89,7 +89,7 @@ export default function Process() {
             <span className="font-mono text-blue text-sm tracking-wider">
               02 / PROCESS
             </span>
-            <h2 className="font-anton text-[clamp(2.5rem,5vw,4rem)] uppercase leading-[0.95] mt-4 text-white">
+            <h2 className="font-anton text-[clamp(2.5rem,5vw,4rem)] uppercase leading-[0.95] mt-4 text-text">
               Simple.
               <br />
               Fast.
@@ -114,7 +114,7 @@ export default function Process() {
                     {step.num}
                   </span>
                   <div>
-                    <h3 className="font-barlow font-semibold text-xl text-white">
+                    <h3 className="font-barlow font-semibold text-xl text-text">
                       {step.title}
                     </h3>
                     <p className="text-offwhite text-sm mt-2 leading-relaxed max-w-md">

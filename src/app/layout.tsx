@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -39,10 +39,19 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap"
           rel="stylesheet"
         />
+        {/* Prevent flash of wrong theme */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const t = localStorage.getItem('rg-theme');
+                if (t) document.documentElement.setAttribute('data-theme', t);
+              } catch (e) {}
+            `,
+          }}
+        />
       </head>
-      <body className="font-barlow antialiased">
-        {children}
-      </body>
+      <body className="font-barlow antialiased">{children}</body>
     </html>
   );
 }

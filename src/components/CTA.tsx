@@ -143,7 +143,7 @@ export default function CTA() {
           <span className="font-mono text-blue text-sm tracking-wider">
             04 / CONTACT
           </span>
-          <h2 className="font-anton text-[clamp(2.5rem,6vw,4.5rem)] uppercase leading-[0.95] mt-4 text-white">
+          <h2 className="font-anton text-[clamp(2.5rem,6vw,4.5rem)] uppercase leading-[0.95] mt-4 text-text">
             Ready To Get
             <br />
             <span className="text-blue">Started?</span>
@@ -163,7 +163,7 @@ export default function CTA() {
                   .getElementById("services")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="px-8 py-3 border border-border text-white text-sm font-medium tracking-wide hover:border-blue hover:text-blue transition-all duration-300"
+              className="px-8 py-3 border border-border text-text text-sm font-medium tracking-wide hover:border-blue hover:text-blue transition-all duration-300"
             >
               See What We Build
             </button>
@@ -189,7 +189,7 @@ export default function CTA() {
                   />
                 </svg>
               </div>
-              <h3 className="font-barlow font-semibold text-lg text-white">
+              <h3 className="font-barlow font-semibold text-lg text-text">
                 Message Sent
               </h3>
               <p className="text-offwhite text-sm mt-2">
@@ -207,7 +207,7 @@ export default function CTA() {
                   onChange={(e) =>
                     setFormState((s) => ({ ...s, name: e.target.value }))
                   }
-                  className="w-full bg-card border border-border px-4 py-3 text-sm text-white placeholder:text-offwhite/40 focus:border-blue focus:outline-none transition-colors"
+                  className="w-full bg-card border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/40 focus:border-blue focus:outline-none transition-colors"
                 />
                 <input
                   type="email"
@@ -217,7 +217,7 @@ export default function CTA() {
                   onChange={(e) =>
                     setFormState((s) => ({ ...s, email: e.target.value }))
                   }
-                  className="w-full bg-card border border-border px-4 py-3 text-sm text-white placeholder:text-offwhite/40 focus:border-blue focus:outline-none transition-colors"
+                  className="w-full bg-card border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/40 focus:border-blue focus:outline-none transition-colors"
                 />
               </div>
               <textarea
@@ -228,7 +228,7 @@ export default function CTA() {
                 onChange={(e) =>
                   setFormState((s) => ({ ...s, message: e.target.value }))
                 }
-                className="w-full bg-card border border-border px-4 py-3 text-sm text-white placeholder:text-offwhite/40 focus:border-blue focus:outline-none transition-colors resize-none"
+                className="w-full bg-card border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/40 focus:border-blue focus:outline-none transition-colors resize-none"
               />
               <button
                 type="submit"

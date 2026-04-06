@@ -15,6 +15,7 @@ const stats = [
 export default function Stats() {
   const sectionRef = useRef<HTMLElement>(null);
   const numbersRef = useRef<(HTMLSpanElement | null)[]>([]);
+  const meshRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -35,16 +36,51 @@ export default function Stats() {
               start: "top 85%",
               toggleActions: "play none none none",
             },
+            onComplete: () => {
+              // Add blue glow on completion
+              if (el.parentElement) {
+                gsap.to(el.parentElement, {
+                  textShadow: "0 0 40px rgba(0,85,255,0.4), 0 0 80px rgba(0,85,255,0.15)",
+                  duration: 0.5,
+                  ease: "power2.out",
+                });
+              }
+            },
           }
         );
       });
+
+      // Animated gradient mesh
+      if (meshRef.current) {
+        gsap.to(meshRef.current, {
+          backgroundPosition: "100% 50%",
+          duration: 8,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+      }
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative py-24 md:py-32 overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative py-24 md:py-32 overflow-hidden"
+    >
+      {/* Animated gradient mesh */}
+      <div
+        ref={meshRef}
+        className="absolute inset-0 opacity-20 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at 20% 50%, rgba(0,85,255,0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 50%, rgba(0,85,255,0.1) 0%, transparent 50%), radial-gradient(ellipse at 50% 80%, rgba(0,85,255,0.08) 0%, transparent 50%)",
+          backgroundSize: "200% 200%",
+        }}
+      />
+
       {/* Giant background numbers */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
         <span className="text-[30vw] font-anton text-outline leading-none">
@@ -58,8 +94,10 @@ export default function Stats() {
             <div key={i} className="text-center">
               <div className="flex items-baseline justify-center gap-1">
                 <span
-                  ref={(el) => { numbersRef.current[i] = el; }}
-                  className="font-anton text-[clamp(4rem,10vw,7rem)] text-white leading-none"
+                  ref={(el) => {
+                    numbersRef.current[i] = el;
+                  }}
+                  className="font-anton text-[clamp(4rem,10vw,7rem)] text-text leading-none"
                 >
                   0
                 </span>

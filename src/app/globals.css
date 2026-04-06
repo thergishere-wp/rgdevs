@@ -2,6 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ══════════════════════════════════════════
+   THEME CSS VARIABLES
+   ══════════════════════════════════════════ */
+
+:root,
+[data-theme="dark"] {
+  --color-bg: #060608;
+  --color-bg-secondary: #0C0C10;
+  --color-card: #0C0C10;
+  --color-text: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.6);
+  --color-blue: #0055FF;
+  --color-blue-light: #4488FF;
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-surface: rgba(255, 255, 255, 0.04);
+  --color-sidebar: #0C0C10;
+  --color-sidebar-border: rgba(255, 255, 255, 0.06);
+  --grain-opacity: 0.035;
+  --gradient-overlay: linear-gradient(to right, #060608, rgba(6,6,8,0.8), transparent);
+  --gradient-bottom: linear-gradient(to top, #060608, transparent);
+  --outline-stroke: rgba(255, 255, 255, 0.08);
+  --scrollbar-track: #060608;
+}
+
+[data-theme="light"] {
+  --color-bg: #F5F0E8;
+  --color-bg-secondary: #EEEAE0;
+  --color-card: #FFFFFF;
+  --color-text: #0A0F2C;
+  --color-text-secondary: rgba(10, 15, 44, 0.55);
+  --color-blue: #0055FF;
+  --color-blue-light: #4488FF;
+  --color-border: rgba(10, 15, 44, 0.12);
+  --color-border-subtle: rgba(10, 15, 44, 0.06);
+  --color-surface: rgba(10, 15, 44, 0.04);
+  --color-sidebar: #EEEAE0;
+  --color-sidebar-border: rgba(10, 15, 44, 0.08);
+  --grain-opacity: 0.02;
+  --gradient-overlay: linear-gradient(to right, #F5F0E8, rgba(245,240,232,0.8), transparent);
+  --gradient-bottom: linear-gradient(to top, #F5F0E8, transparent);
+  --outline-stroke: rgba(10, 15, 44, 0.08);
+  --scrollbar-track: #F5F0E8;
+}
+
 /* ── Reset & Base ── */
 * {
   margin: 0;
@@ -10,16 +55,29 @@
 }
 
 html {
-  scroll-behavior: auto; /* GSAP handles smooth scroll */
+  scroll-behavior: auto;
   cursor: none;
 }
 
 body {
-  background: #060608;
-  color: #ffffff;
+  background: var(--color-bg);
+  color: var(--color-text);
   font-family: "Barlow", sans-serif;
   overflow-x: hidden;
   cursor: none;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* ── Theme transition on all themed elements ── */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.5s;
+  transition-timing-function: ease;
+}
+
+/* Exclude transforms/animations from the blanket transition */
+.no-theme-transition, .no-theme-transition * {
+  transition: none !important;
 }
 
 /* ── Grain Overlay ── */
@@ -32,7 +90,7 @@ body::before {
   height: 100%;
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.035;
+  opacity: var(--grain-opacity);
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 128px 128px;
@@ -40,7 +98,7 @@ body::before {
 
 /* ── Selection ── */
 ::selection {
-  background: #0055FF;
+  background: var(--color-blue);
   color: #fff;
 }
 
@@ -49,10 +107,10 @@ body::before {
   width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #060608;
+  background: var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: #0055FF;
+  background: var(--color-blue);
   border-radius: 2px;
 }
 
@@ -78,7 +136,7 @@ a, button, [role="button"], input, textarea, select, label {
 
 /* ── Number outline text ── */
 .text-outline {
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.08);
+  -webkit-text-stroke: 1px var(--outline-stroke);
   color: transparent;
 }
 
@@ -90,4 +148,85 @@ a, button, [role="button"], input, textarea, select, label {
 /* ── Smooth image ── */
 img {
   -webkit-user-drag: none;
+}
+
+/* ── Scanline overlay for hero ── */
+.scanlines {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.02) 2px,
+    rgba(0, 0, 0, 0.02) 4px
+  );
+}
+
+/* ── Glitch text effect ── */
+@keyframes glitch-1 {
+  0%   { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 2px); }
+  20%  { clip-path: inset(50% 0 20% 0); transform: translate(3px, -1px); }
+  40%  { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 1px); }
+  60%  { clip-path: inset(40% 0 30% 0); transform: translate(2px, -2px); }
+  80%  { clip-path: inset(60% 0 10% 0); transform: translate(-1px, 3px); }
+  100% { clip-path: inset(0% 0 0% 0); transform: translate(0); }
+}
+
+@keyframes glitch-2 {
+  0%   { clip-path: inset(60% 0 10% 0); transform: translate(3px, -2px); }
+  20%  { clip-path: inset(10% 0 60% 0); transform: translate(-3px, 1px); }
+  40%  { clip-path: inset(50% 0 20% 0); transform: translate(2px, -1px); }
+  60%  { clip-path: inset(20% 0 50% 0); transform: translate(-2px, 2px); }
+  80%  { clip-path: inset(30% 0 40% 0); transform: translate(1px, -3px); }
+  100% { clip-path: inset(0% 0 0% 0); transform: translate(0); }
+}
+
+.glitch-active {
+  position: relative;
+}
+
+.glitch-active::before,
+.glitch-active::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-active::before {
+  color: #ff0040;
+  animation: glitch-1 0.4s ease forwards;
+  mix-blend-mode: screen;
+}
+
+.glitch-active::after {
+  color: #00ffff;
+  animation: glitch-2 0.4s ease forwards;
+  mix-blend-mode: screen;
+}
+
+/* ── Pro card pulsing glow ── */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 30px -8px rgba(0, 85, 255, 0.3); }
+  50%      { box-shadow: 0 0 50px -5px rgba(0, 85, 255, 0.5); }
+}
+
+.pro-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* ── Status dot pulse ── */
+@keyframes status-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.8); opacity: 0; }
+}
+
+.status-live::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: status-pulse 2s ease-in-out infinite;
 }

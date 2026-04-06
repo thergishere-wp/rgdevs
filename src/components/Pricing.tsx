@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -56,6 +56,17 @@ const tiers = [
 export default function Pricing() {
   const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+  const spotlightRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (spotlightRef.current) {
+      const rect = sectionRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      spotlightRef.current.style.background = `radial-gradient(500px circle at ${x}px ${y}px, rgba(0,85,255,0.05), transparent 70%)`;
+    }
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -91,15 +102,21 @@ export default function Pricing() {
     <section
       ref={sectionRef}
       id="pricing"
-      className="py-24 md:py-32"
+      className="relative py-24 md:py-32"
+      onMouseMove={handleMouseMove}
     >
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Header */}
+      {/* Cursor spotlight */}
+      <div
+        ref={spotlightRef}
+        className="absolute inset-0 pointer-events-none z-0"
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <span className="font-mono text-blue text-sm tracking-wider">
             03 / PRICING
           </span>
-          <h2 className="font-anton text-[clamp(2.5rem,5vw,4rem)] uppercase leading-[0.95] mt-4 text-white">
+          <h2 className="font-anton text-[clamp(2.5rem,5vw,4rem)] uppercase leading-[0.95] mt-4 text-text">
             Simple <span className="text-blue">Pricing.</span>
           </h2>
           <p className="text-offwhite text-sm mt-4 max-w-lg mx-auto">
@@ -108,7 +125,6 @@ export default function Pricing() {
           </p>
         </div>
 
-        {/* Cards */}
         <div
           ref={cardsRef}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto"
@@ -118,7 +134,7 @@ export default function Pricing() {
               key={tier.name}
               className={`relative bg-card border p-8 flex flex-col ${
                 tier.popular
-                  ? "border-blue shadow-[0_0_40px_-10px_rgba(0,85,255,0.3)]"
+                  ? "border-blue pro-glow"
                   : "border-border"
               }`}
             >
@@ -129,11 +145,11 @@ export default function Pricing() {
               )}
 
               <div className="mb-6">
-                <h3 className="font-barlow font-semibold text-lg text-white">
+                <h3 className="font-barlow font-semibold text-lg text-text">
                   {tier.name}
                 </h3>
                 <div className="flex items-baseline gap-1 mt-3">
-                  <span className="font-anton text-5xl text-white">
+                  <span className="font-anton text-5xl text-text">
                     ${tier.price}
                   </span>
                   <span className="text-offwhite text-sm">/month</span>
@@ -181,7 +197,7 @@ export default function Pricing() {
                   className={`w-full py-3 text-sm font-medium tracking-wide transition-all duration-300 ${
                     tier.popular
                       ? "bg-blue text-white hover:bg-blue-light"
-                      : "border border-border text-white hover:border-blue hover:text-blue"
+                      : "border border-border text-text hover:border-blue hover:text-blue"
                   }`}
                 >
                   Get Started

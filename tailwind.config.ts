@@ -9,12 +9,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#060608",
-        card: "#0C0C10",
-        blue: "#0055FF",
-        "blue-light": "#4488FF",
-        offwhite: "rgba(255,255,255,0.6)",
-        border: "rgba(255,255,255,0.12)",
+        bg: "var(--color-bg)",
+        "bg-secondary": "var(--color-bg-secondary)",
+        card: "var(--color-card)",
+        blue: "var(--color-blue)",
+        "blue-light": "var(--color-blue-light)",
+        offwhite: "var(--color-text-secondary)",
+        border: "var(--color-border)",
+        "border-subtle": "var(--color-border-subtle)",
+        surface: "var(--color-surface)",
+        sidebar: "var(--color-sidebar)",
+        "sidebar-border": "var(--color-sidebar-border)",
+        text: "var(--color-text)",
+        "text-secondary": "var(--color-text-secondary)",
       },
       fontFamily: {
         anton: ["Anton", "sans-serif"],

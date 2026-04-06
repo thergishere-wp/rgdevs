@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
@@ -9,26 +9,22 @@ gsap.registerPlugin(ScrollTrigger);
 
 const panels = [
   {
-    image:
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80",
     title: "Code That Scales",
     subtitle: "Enterprise-ready architecture",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80",
     title: "Cloud Native",
     subtitle: "Built for modern infrastructure",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80",
     title: "Data Driven",
     subtitle: "Real-time analytics & reporting",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
     title: "Always On",
     subtitle: "99.9% uptime guarantee",
   },
@@ -38,13 +34,19 @@ export default function HorizontalScroll() {
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const titlesRef = useRef<(HTMLDivElement | null)[]>([]);
+  const imagesRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  const triggerGlitch = useCallback((el: HTMLElement, text: string) => {
+    el.setAttribute("data-text", text);
+    el.classList.add("glitch-active");
+    setTimeout(() => el.classList.remove("glitch-active"), 400);
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
     const container = containerRef.current;
     if (!section || !container) return;
 
-    // Only enable horizontal scroll on desktop
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 768px)", () => {
@@ -62,9 +64,32 @@ export default function HorizontalScroll() {
         },
       });
 
-      // Animate each title as its panel enters viewport
-      titlesRef.current.forEach((title) => {
+      // Title reveals with glitch + image zoom
+      titlesRef.current.forEach((title, i) => {
         if (!title) return;
+        const img = imagesRef.current[i];
+        const titleText = panels[i].title;
+
+        // Image zoom on enter
+        if (img) {
+          gsap.fromTo(
+            img,
+            { scale: 1.2 },
+            {
+              scale: 1,
+              duration: 1,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: img,
+                containerAnimation: scrollTween,
+                start: "left 90%",
+                end: "left 20%",
+                scrub: 0.5,
+              },
+            }
+          );
+        }
+
         gsap.fromTo(
           title,
           { clipPath: "inset(100% 0 0 0)", opacity: 0 },
@@ -78,6 +103,14 @@ export default function HorizontalScroll() {
               containerAnimation: scrollTween,
               start: "left 80%",
               toggleActions: "play none none reverse",
+              onEnter: () => {
+                const h3 = title.querySelector("h3");
+                if (h3) triggerGlitch(h3 as HTMLElement, titleText);
+              },
+              onEnterBack: () => {
+                const h3 = title.querySelector("h3");
+                if (h3) triggerGlitch(h3 as HTMLElement, titleText);
+              },
             },
           }
         );
@@ -87,7 +120,7 @@ export default function HorizontalScroll() {
     });
 
     return () => mm.revert();
-  }, []);
+  }, [triggerGlitch]);
 
   return (
     <section ref={sectionRef} className="relative overflow-hidden">
@@ -101,22 +134,28 @@ export default function HorizontalScroll() {
             key={i}
             className="relative w-screen h-screen flex-shrink-0 overflow-hidden"
           >
-            <Image
-              src={panel.image}
-              alt={panel.title}
-              fill
-              className="object-cover"
-              sizes="100vw"
-            />
+            <div
+              ref={(el) => { imagesRef.current[i] = el; }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={panel.image}
+                alt={panel.title}
+                fill
+                className="object-cover"
+                sizes="100vw"
+              />
+            </div>
             <div className="absolute inset-0 bg-bg/60" />
-            <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent" />
+            <div
+              className="absolute inset-0"
+              style={{ background: "var(--gradient-bottom)" }}
+            />
 
-            {/* Panel number */}
             <span className="absolute top-8 left-8 font-mono text-blue/30 text-sm tracking-widest">
               0{i + 1} / 04
             </span>
 
-            {/* Title overlay */}
             <div
               ref={(el) => { titlesRef.current[i] = el; }}
               className="absolute bottom-16 left-8 md:left-16"
@@ -135,10 +174,7 @@ export default function HorizontalScroll() {
       {/* Mobile: vertical stack */}
       <div className="md:hidden space-y-4 px-4 py-16">
         {panels.map((panel, i) => (
-          <div
-            key={i}
-            className="relative aspect-[4/3] overflow-hidden"
-          >
+          <div key={i} className="relative aspect-[4/3] overflow-hidden">
             <Image
               src={panel.image}
               alt={panel.title}
@@ -147,7 +183,10 @@ export default function HorizontalScroll() {
               sizes="100vw"
             />
             <div className="absolute inset-0 bg-bg/50" />
-            <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent" />
+            <div
+              className="absolute inset-0"
+              style={{ background: "var(--gradient-bottom)" }}
+            />
             <div className="absolute bottom-6 left-6">
               <p className="font-mono text-blue text-xs tracking-wider uppercase mb-2">
                 {panel.subtitle}

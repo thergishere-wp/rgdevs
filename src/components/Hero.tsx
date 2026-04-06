@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -12,21 +15,99 @@ export default function Hero() {
   const line3Ref = useRef<HTMLDivElement>(null);
   const subtextRef = useRef<HTMLParagraphElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const spotlightRef = useRef<HTMLDivElement>(null);
   const numberRef = useRef<HTMLSpanElement>(null);
 
+  // Particle network
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animId: number;
+    const particles: { x: number; y: number; vx: number; vy: number }[] = [];
+    const count = 60;
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+      });
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw connections
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(0,85,255,${0.15 * (1 - dist / 150)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw and update particles
+      particles.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0,85,255,0.6)";
+        ctx.fill();
+      });
+
+      animId = requestAnimationFrame(animate);
+    };
+
+    animate();
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+
+  // Spotlight follows cursor
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (spotlightRef.current) {
+      spotlightRef.current.style.background = `radial-gradient(300px circle at ${e.clientX}px ${e.clientY}px, rgba(0,85,255,0.06), transparent 70%)`;
+    }
+  }, []);
+
+  // GSAP animations
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.3 });
 
-      // Eyebrow
       tl.fromTo(
         eyebrowRef.current,
         { opacity: 0, y: 20 },
         { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }
       );
 
-      // Headline lines with clip-path
       [line1Ref, line2Ref, line3Ref].forEach((ref) => {
         tl.fromTo(
           ref.current,
@@ -41,7 +122,6 @@ export default function Hero() {
         );
       });
 
-      // Subtext
       tl.fromTo(
         subtextRef.current,
         { opacity: 0, y: 20 },
@@ -49,7 +129,6 @@ export default function Hero() {
         "-=0.3"
       );
 
-      // Scroll indicator
       tl.fromTo(
         scrollIndicatorRef.current,
         { opacity: 0 },
@@ -57,19 +136,6 @@ export default function Hero() {
         "-=0.2"
       );
 
-      // Image parallax
-      gsap.to(imageRef.current, {
-        yPercent: -20,
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 0.5,
-        },
-      });
-
-      // Background number
       tl.fromTo(
         numberRef.current,
         { opacity: 0, x: 50 },
@@ -77,7 +143,6 @@ export default function Hero() {
         "-=1"
       );
 
-      // Scroll indicator line animation
       gsap.to(".scroll-line", {
         scaleY: 1,
         duration: 1,
@@ -95,31 +160,68 @@ export default function Hero() {
       ref={sectionRef}
       id="hero"
       className="relative h-screen w-full overflow-hidden flex items-end"
+      onMouseMove={handleMouseMove}
     >
-      {/* Background number */}
-      <span
-        ref={numberRef}
-        className="absolute bottom-0 right-0 text-[30vw] font-anton leading-none text-white opacity-0 select-none pointer-events-none"
-      >
-        001
-      </span>
-
-      {/* Parallax image */}
-      <div
-        ref={imageRef}
-        className="absolute top-0 right-0 w-1/2 h-[120%] max-md:w-full max-md:opacity-20"
-      >
+      {/* Video background */}
+      <div className="absolute inset-0">
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-30"
+          poster="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80"
+        >
+          <source
+            src="https://videos.pexels.com/video-files/5894094/5894094-hd_1920_1080_30fps.mp4"
+            type="video/mp4"
+          />
+        </video>
+        {/* Fallback image behind video */}
         <Image
           src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80"
           alt="Code on screen"
           fill
-          className="object-cover"
+          className="object-cover -z-10"
           priority
-          sizes="(max-width: 768px) 100vw, 50vw"
+          sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/80 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent" />
       </div>
+
+      {/* Overlays */}
+      <div className="absolute inset-0 bg-bg/50" />
+      <div
+        className="absolute inset-0"
+        style={{ background: "var(--gradient-overlay)" }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{ background: "var(--gradient-bottom)" }}
+      />
+
+      {/* Scanlines */}
+      <div className="absolute inset-0 scanlines pointer-events-none" />
+
+      {/* Particle network canvas */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full pointer-events-none z-[1]"
+      />
+
+      {/* Cursor spotlight */}
+      <div
+        ref={spotlightRef}
+        className="absolute inset-0 pointer-events-none z-[2]"
+      />
+
+      {/* Background number */}
+      <span
+        ref={numberRef}
+        className="absolute bottom-0 right-0 text-[30vw] font-anton leading-none text-text opacity-0 select-none pointer-events-none"
+      >
+        001
+      </span>
 
       {/* Content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pb-16 md:pb-24">
@@ -131,7 +233,10 @@ export default function Hero() {
         </p>
 
         <h1 className="font-anton uppercase leading-[0.9] tracking-tight">
-          <div ref={line1Ref} className="text-[clamp(3rem,10vw,8rem)] text-white">
+          <div
+            ref={line1Ref}
+            className="text-[clamp(3rem,10vw,8rem)] text-text"
+          >
             We Build
           </div>
           <div
@@ -140,7 +245,10 @@ export default function Hero() {
           >
             Platforms
           </div>
-          <div ref={line3Ref} className="text-[clamp(3rem,10vw,8rem)] text-blue">
+          <div
+            ref={line3Ref}
+            className="text-[clamp(3rem,10vw,8rem)] text-blue"
+          >
             That Work.
           </div>
         </h1>
@@ -154,7 +262,6 @@ export default function Hero() {
             priced fair, maintained forever.
           </p>
 
-          {/* Scroll indicator */}
           <div
             ref={scrollIndicatorRef}
             className="hidden md:flex flex-col items-center gap-2 opacity-0"

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import ThemeProvider from "@/components/ThemeProvider";
 import CustomCursor from "@/components/CustomCursor";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -19,27 +20,20 @@ export default function Home() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Refresh ScrollTrigger after all images load
     const images = document.querySelectorAll("img");
     let loaded = 0;
     const total = images.length;
 
     const onLoad = () => {
       loaded++;
-      if (loaded >= total) {
-        ScrollTrigger.refresh();
-      }
+      if (loaded >= total) ScrollTrigger.refresh();
     };
 
     images.forEach((img) => {
-      if (img.complete) {
-        onLoad();
-      } else {
-        img.addEventListener("load", onLoad);
-      }
+      if (img.complete) onLoad();
+      else img.addEventListener("load", onLoad);
     });
 
-    // Fallback refresh
     const timeout = setTimeout(() => ScrollTrigger.refresh(), 2000);
 
     return () => {
@@ -49,7 +43,7 @@ export default function Home() {
   }, []);
 
   return (
-    <>
+    <ThemeProvider>
       <CustomCursor />
       <Navbar />
       <main>
@@ -63,6 +57,6 @@ export default function Home() {
         <CTA />
       </main>
       <Footer />
-    </>
+    </ThemeProvider>
   );
 }
