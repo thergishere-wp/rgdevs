@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
 import Link from "next/link";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -14,8 +17,21 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  // Smart navigation: scroll if on homepage, navigate if on another page
+  const navigateTo = (sectionId: string) => {
+    if (pathname === "/") {
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      router.push(`/#${sectionId}`);
+    }
+  };
+
+  const goHome = () => {
+    if (pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      router.push("/");
+    }
   };
 
   return (
@@ -29,7 +45,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <button
-          onClick={() => scrollTo("hero")}
+          onClick={goHome}
           className="flex items-center gap-0 text-xl font-bold tracking-tight"
         >
           <span className="text-text">RG</span>
@@ -40,19 +56,19 @@ export default function Navbar() {
         {/* Links */}
         <div className="hidden md:flex items-center gap-8">
           <button
-            onClick={() => scrollTo("services")}
+            onClick={() => navigateTo("services")}
             className="text-sm text-offwhite hover:text-text transition-colors font-barlow tracking-wide"
           >
             Services
           </button>
           <button
-            onClick={() => scrollTo("process")}
+            onClick={() => navigateTo("process")}
             className="text-sm text-offwhite hover:text-text transition-colors font-barlow tracking-wide"
           >
             Process
           </button>
           <button
-            onClick={() => scrollTo("pricing")}
+            onClick={() => navigateTo("pricing")}
             className="text-sm text-offwhite hover:text-text transition-colors font-barlow tracking-wide"
           >
             Pricing
@@ -104,7 +120,7 @@ export default function Navbar() {
 
           {/* CTA */}
           <button
-            onClick={() => scrollTo("contact")}
+            onClick={() => navigateTo("contact")}
             className="px-5 py-2 text-sm border border-blue text-blue hover:bg-blue hover:text-white transition-all duration-300 tracking-wide"
           >
             Start Free

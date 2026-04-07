@@ -36,6 +36,17 @@ export default function Home() {
 
     const timeout = setTimeout(() => ScrollTrigger.refresh(), 2000);
 
+    // Handle hash navigation from other pages (e.g. /portfolio -> /#services)
+    const handleHash = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash) {
+        setTimeout(() => {
+          document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+        }, 300);
+      }
+    };
+    handleHash();
+
     return () => {
       clearTimeout(timeout);
       ScrollTrigger.getAll().forEach((t) => t.kill());
