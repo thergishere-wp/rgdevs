@@ -9,24 +9,44 @@ gsap.registerPlugin(ScrollTrigger);
 
 const panels = [
   {
-    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1920&q=90",
     title: "Code That Scales",
     subtitle: "Enterprise-ready architecture",
   },
   {
-    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1920&q=90",
     title: "Cloud Native",
     subtitle: "Built for modern infrastructure",
   },
   {
-    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1920&q=90",
     title: "Data Driven",
     subtitle: "Real-time analytics & reporting",
   },
   {
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1920&q=90",
+    title: "Cyber Secure",
+    subtitle: "Zero-trust security model",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1573164713988-8665fc963095?w=1920&q=90",
+    title: "AI Powered",
+    subtitle: "Intelligent automation built in",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=90",
     title: "Always On",
     subtitle: "99.9% uptime guarantee",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=90",
+    title: "Team Sync",
+    subtitle: "Real-time collaboration tools",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=1920&q=90",
+    title: "Ship Fast",
+    subtitle: "From concept to production in days",
   },
 ];
 
@@ -153,7 +173,7 @@ export default function HorizontalScroll() {
             />
 
             <span className="absolute top-8 left-8 font-mono text-blue/30 text-sm tracking-widest">
-              0{i + 1} / 04
+              0{i + 1} / 0{panels.length}
             </span>
 
             <div
