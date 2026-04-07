@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/useAuth";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { Project } from "@/lib/types";
 import PortalSidebar from "@/components/PortalSidebar";
+import GlassCard from "@/components/GlassCard";
 
 const sidebarItems = [
   { label: "Overview", href: "/admin", icon: "overview" },
@@ -86,7 +87,7 @@ export default function AdminPortfolioPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar items={sidebarItems} userName={profile?.full_name || "Admin"} role="Admin" onSignOut={signOut} />
       <main className="flex-1 ml-60 p-8">
         <div className="flex items-center justify-between mb-8">
@@ -101,12 +102,13 @@ export default function AdminPortfolioPage() {
         </div>
 
         {showForm && (
-          <form onSubmit={handleSubmit} className="bg-card border border-border p-6 mb-8 space-y-4">
+          <GlassCard className="mb-8">
+            <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input type="text" required placeholder="Project name" value={form.name} onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
-                className="bg-bg border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none" />
+                className="bg-transparent border rounded-lg px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }} />
               <select value={form.type} onChange={(e) => setForm((s) => ({ ...s, type: e.target.value }))}
-                className="bg-bg border border-border px-4 py-3 text-sm text-text focus:border-blue focus:outline-none">
+                className="bg-transparent border rounded-lg px-4 py-3 text-sm text-text focus:border-blue focus:outline-none" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}>
                 <option value="">Type</option>
                 <option value="website">Website</option>
                 <option value="webapp">Web App</option>
@@ -116,15 +118,15 @@ export default function AdminPortfolioPage() {
               </select>
             </div>
             <textarea placeholder="Description" rows={2} value={form.description} onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))}
-              className="w-full bg-bg border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none resize-none" />
+              className="w-full bg-transparent border rounded-lg px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none resize-none" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input type="url" placeholder="Live URL" value={form.live_url} onChange={(e) => setForm((s) => ({ ...s, live_url: e.target.value }))}
-                className="bg-bg border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none" />
+                className="bg-transparent border rounded-lg px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }} />
               <input type="url" placeholder="Image URL" value={form.image_url} onChange={(e) => setForm((s) => ({ ...s, image_url: e.target.value }))}
-                className="bg-bg border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none" />
+                className="bg-transparent border rounded-lg px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }} />
             </div>
             <input type="text" placeholder="Tags (comma separated)" value={form.tags} onChange={(e) => setForm((s) => ({ ...s, tags: e.target.value }))}
-              className="w-full bg-bg border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none" />
+              className="w-full bg-transparent border rounded-lg px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }} />
             <label className="flex items-center gap-2">
               <input type="checkbox" checked={form.featured} onChange={(e) => setForm((s) => ({ ...s, featured: e.target.checked }))} className="accent-blue" />
               <span className="text-sm text-text">Featured</span>
@@ -133,12 +135,13 @@ export default function AdminPortfolioPage() {
               className="px-6 py-2.5 bg-blue text-white text-sm font-medium tracking-wide hover:bg-blue-light transition-colors disabled:opacity-50">
               {saving ? "Saving..." : editId ? "Update Project" : "Add Project"}
             </button>
-          </form>
+            </form>
+          </GlassCard>
         )}
 
         <div className="space-y-3">
           {projects.map((project) => (
-            <div key={project.id} className="bg-card border border-border p-5 flex items-center justify-between">
+            <GlassCard key={project.id} className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-3">
                   <p className="text-sm text-text font-medium">{project.name}</p>
@@ -148,10 +151,10 @@ export default function AdminPortfolioPage() {
                 {project.description && <p className="text-xs text-offwhite mt-1 max-w-md truncate">{project.description}</p>}
               </div>
               <div className="flex gap-2">
-                <button onClick={() => handleEdit(project)} className="px-3 py-1.5 border border-border text-xs text-text hover:border-blue transition-colors">Edit</button>
-                <button onClick={() => handleDelete(project.id)} className="px-3 py-1.5 border border-border text-xs text-red-400 hover:border-red-400 transition-colors">Delete</button>
+                <button onClick={() => handleEdit(project)} className="px-3 py-1.5 border text-xs text-text hover:border-blue transition-colors" style={{ borderColor: "rgba(255,255,255,0.1)" }}>Edit</button>
+                <button onClick={() => handleDelete(project.id)} className="px-3 py-1.5 border text-xs text-red-400 hover:border-red-400 transition-colors" style={{ borderColor: "rgba(255,255,255,0.1)" }}>Delete</button>
               </div>
-            </div>
+            </GlassCard>
           ))}
         </div>
       </main>

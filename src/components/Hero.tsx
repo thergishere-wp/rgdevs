@@ -28,6 +28,7 @@ export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
   const numberRef = useRef<HTMLSpanElement>(null);
+  const introCardRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
 
@@ -192,6 +193,13 @@ export default function Hero() {
         "-=1"
       );
 
+      tl.fromTo(
+        introCardRef.current,
+        { opacity: 0, y: 30, x: 20 },
+        { opacity: 1, y: 0, x: 0, duration: 0.8, ease: "power3.out" },
+        "-=0.5"
+      );
+
       gsap.to(".scroll-line", {
         scaleY: 1,
         duration: 1,
@@ -222,7 +230,7 @@ export default function Hero() {
             loop
             playsInline
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ opacity: 0.35 }}
+            style={{ opacity: 0.55 }}
           />
         )}
         {/* Fallback image — always behind, visible on mobile or video fail */}
@@ -231,16 +239,16 @@ export default function Hero() {
           alt="Code on screen"
           fill
           className="object-cover"
-          style={{ opacity: isMobile || videoFailed ? 0.3 : 0 }}
+          style={{ opacity: isMobile || videoFailed ? 0.45 : 0 }}
           priority
           sizes="100vw"
         />
       </div>
 
-      {/* Dark overlay */}
+      {/* Dark overlay — lighter to show more image */}
       <div
         className="absolute inset-0"
-        style={{ background: "rgba(6,6,8,0.65)" }}
+        style={{ background: "rgba(6,6,8,0.45)" }}
       />
 
       {/* Gradient overlays */}
@@ -285,52 +293,114 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pb-16 md:pb-24">
-        <p
-          ref={eyebrowRef}
-          className="font-mono text-sm text-blue mb-6 opacity-0 tracking-wider"
-        >
-          {"// Web Platforms Built Different"}
-        </p>
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+          {/* Left: headings */}
+          <div className="flex-1">
+            <p
+              ref={eyebrowRef}
+              className="font-mono text-sm text-blue mb-6 opacity-0 tracking-wider"
+            >
+              {"// Web Platforms Built Different"}
+            </p>
 
-        <h1 className="font-anton uppercase leading-[0.9] tracking-tight">
-          <div
-            ref={line1Ref}
-            className="text-[clamp(3rem,10vw,8rem)] text-text"
-          >
-            We Build
-          </div>
-          <div
-            ref={line2Ref}
-            className="text-[clamp(3rem,10vw,8rem)] text-outline-blue"
-          >
-            Platforms
-          </div>
-          <div
-            ref={line3Ref}
-            className="text-[clamp(3rem,10vw,8rem)] text-blue"
-          >
-            That Work.
-          </div>
-        </h1>
+            <h1 className="font-anton uppercase leading-[0.9] tracking-tight">
+              <div
+                ref={line1Ref}
+                className="text-[clamp(2.5rem,10vw,8rem)] text-text"
+              >
+                We Build
+              </div>
+              <div
+                ref={line2Ref}
+                className="text-[clamp(2.5rem,10vw,8rem)] text-outline-blue"
+              >
+                Platforms
+              </div>
+              <div
+                ref={line3Ref}
+                className="text-[clamp(2.5rem,10vw,8rem)] text-blue"
+              >
+                That Work.
+              </div>
+            </h1>
 
-        <div className="flex items-end justify-between mt-12">
-          <p
-            ref={subtextRef}
-            className="text-offwhite text-sm md:text-base max-w-md leading-relaxed opacity-0"
-          >
-            Custom web platforms, ERP systems, and dashboards — built fast,
-            priced fair, maintained forever.
-          </p>
+            <div className="flex items-end justify-between mt-8 md:mt-12">
+              <p
+                ref={subtextRef}
+                className="text-offwhite text-sm md:text-base max-w-md leading-relaxed opacity-0"
+              >
+                Custom web platforms, ERP systems, and dashboards — built fast,
+                priced fair, maintained forever.
+              </p>
 
+              <div
+                ref={scrollIndicatorRef}
+                className="hidden md:flex flex-col items-center gap-2 opacity-0"
+              >
+                <span className="text-xs font-mono text-offwhite tracking-widest uppercase">
+                  Scroll
+                </span>
+                <div className="w-px h-12 bg-border relative overflow-hidden">
+                  <div className="scroll-line absolute top-0 left-0 w-full h-full bg-blue origin-top scale-y-0" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: intro glass card */}
           <div
-            ref={scrollIndicatorRef}
-            className="hidden md:flex flex-col items-center gap-2 opacity-0"
+            ref={introCardRef}
+            className="hidden lg:block w-[300px] shrink-0 rounded-2xl p-6 opacity-0"
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              border: "1px solid rgba(255,255,255,0.08)",
+            }}
           >
-            <span className="text-xs font-mono text-offwhite tracking-widest uppercase">
-              Scroll
-            </span>
-            <div className="w-px h-12 bg-border relative overflow-hidden">
-              <div className="scroll-line absolute top-0 left-0 w-full h-full bg-blue origin-top scale-y-0" />
+            {/* Avatar */}
+            <div className="flex items-center gap-3 mb-4">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-mono font-bold"
+                style={{
+                  background: "rgba(0,85,255,0.15)",
+                  border: "1px solid rgba(0,85,255,0.3)",
+                  color: "#4488FF",
+                }}
+              >
+                RG
+              </div>
+              <div>
+                <p className="text-text text-sm font-barlow font-semibold">
+                  RG Devs
+                </p>
+                <p className="text-offwhite/50 text-[10px] font-mono tracking-wider">
+                  FOUNDER & DEVELOPER
+                </p>
+              </div>
+            </div>
+
+            <p className="text-offwhite/80 text-xs leading-relaxed">
+              One-person studio based in Thailand, building custom web platforms
+              for businesses worldwide. I handle everything — design, code,
+              deployment, and ongoing support.
+            </p>
+
+            <div className="flex items-center gap-4 mt-4 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+              <div>
+                <p className="font-anton text-lg text-text leading-none">48h</p>
+                <p className="text-[9px] font-mono text-offwhite/40 tracking-wider mt-0.5">AVG BUILD</p>
+              </div>
+              <div className="w-px h-8" style={{ background: "rgba(255,255,255,0.06)" }} />
+              <div>
+                <p className="font-anton text-lg text-text leading-none">100%</p>
+                <p className="text-[9px] font-mono text-offwhite/40 tracking-wider mt-0.5">CUSTOM</p>
+              </div>
+              <div className="w-px h-8" style={{ background: "rgba(255,255,255,0.06)" }} />
+              <div>
+                <p className="font-anton text-lg text-text leading-none">24/7</p>
+                <p className="text-[9px] font-mono text-offwhite/40 tracking-wider mt-0.5">SUPPORT</p>
+              </div>
             </div>
           </div>
         </div>

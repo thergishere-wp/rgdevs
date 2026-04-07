@@ -6,6 +6,7 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { Ticket } from "@/lib/types";
 import PortalSidebar from "@/components/PortalSidebar";
 import StatusBadge from "@/components/StatusBadge";
+import GlassCard from "@/components/GlassCard";
 
 const sidebarItems = [
   { label: "Overview", href: "/admin", icon: "overview" },
@@ -43,7 +44,7 @@ export default function AdminTicketsPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar items={sidebarItems} userName={profile?.full_name || "Admin"} role="Admin" onSignOut={signOut} />
       <main className="flex-1 ml-60 p-8">
         <span className="font-mono text-blue text-xs tracking-wider">/ TICKETS</span>
@@ -59,11 +60,11 @@ export default function AdminTicketsPage() {
           ))}
         </div>
 
-        <div className="bg-card border border-border">
+        <GlassCard noPadding>
           {tickets.length === 0 ? <div className="p-12 text-center"><p className="text-offwhite text-sm">No tickets</p></div> : (
-            <div className="divide-y divide-border">
+            <div>
               {tickets.map((ticket) => (
-                <div key={ticket.id} className="p-5 hover:bg-surface transition-colors">
+                <div key={ticket.id} className="p-5 hover:bg-white/[0.02] transition-colors" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-text font-medium">{ticket.title}</p>
                     <div className="flex items-center gap-2">
@@ -79,7 +80,8 @@ export default function AdminTicketsPage() {
                       <select
                         value={ticket.status}
                         onChange={(e) => updateTicket(ticket.id, { status: e.target.value as Ticket["status"] })}
-                        className="bg-bg border border-border text-xs text-text px-2 py-1 focus:border-blue focus:outline-none"
+                        className="bg-transparent border rounded-lg text-xs text-text px-2 py-1 focus:border-blue focus:outline-none"
+                        style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}
                       >
                         <option value="open">Open</option>
                         <option value="in_progress">In Progress</option>
@@ -89,7 +91,8 @@ export default function AdminTicketsPage() {
                       <select
                         value={ticket.priority}
                         onChange={(e) => updateTicket(ticket.id, { priority: e.target.value as Ticket["priority"] })}
-                        className="bg-bg border border-border text-xs text-text px-2 py-1 focus:border-blue focus:outline-none"
+                        className="bg-transparent border rounded-lg text-xs text-text px-2 py-1 focus:border-blue focus:outline-none"
+                        style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}
                       >
                         <option value="low">Low</option>
                         <option value="normal">Normal</option>
@@ -102,7 +105,7 @@ export default function AdminTicketsPage() {
               ))}
             </div>
           )}
-        </div>
+        </GlassCard>
       </main>
     </div>
   );

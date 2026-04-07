@@ -7,6 +7,7 @@ import { Profile, Platform } from "@/lib/types";
 import PortalSidebar from "@/components/PortalSidebar";
 import StatusBadge from "@/components/StatusBadge";
 import Link from "next/link";
+import GlassCard from "@/components/GlassCard";
 
 const sidebarItems = [
   { label: "Overview", href: "/admin", icon: "overview" },
@@ -52,7 +53,7 @@ export default function ClientsPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar items={sidebarItems} userName={profile?.full_name || "Admin"} role="Admin" onSignOut={signOut} />
       <main className="flex-1 ml-60 p-8">
         <div className="flex items-center justify-between mb-8">
@@ -72,10 +73,10 @@ export default function ClientsPage() {
           </div>
         </div>
 
-        <div className="bg-card border border-border overflow-hidden">
+        <GlassCard noPadding>
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border">
+              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                 <th className="text-left p-4 font-mono text-[10px] text-offwhite tracking-wider uppercase">Name</th>
                 <th className="text-left p-4 font-mono text-[10px] text-offwhite tracking-wider uppercase">Email</th>
                 <th className="text-left p-4 font-mono text-[10px] text-offwhite tracking-wider uppercase">Plan</th>
@@ -83,9 +84,9 @@ export default function ClientsPage() {
                 <th className="text-left p-4 font-mono text-[10px] text-offwhite tracking-wider uppercase">Joined</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody>
               {clients.map((client) => (
-                <tr key={client.id} className="hover:bg-surface transition-colors">
+                <tr key={client.id} className="hover:bg-white/[0.02] transition-colors" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                   <td className="p-4">
                     <Link href={`/admin/clients/${client.id}`} className="text-sm text-text font-medium hover:text-blue transition-colors">
                       {client.full_name || "—"}
@@ -116,7 +117,7 @@ export default function ClientsPage() {
               <p className="text-offwhite text-sm">No clients yet</p>
             </div>
           )}
-        </div>
+        </GlassCard>
       </main>
     </div>
   );

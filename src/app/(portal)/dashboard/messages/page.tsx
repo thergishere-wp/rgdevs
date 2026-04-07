@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/useAuth";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { Message } from "@/lib/types";
 import PortalSidebar from "@/components/PortalSidebar";
+import GlassCard from "@/components/GlassCard";
 
 const sidebarItems = [
   { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
@@ -41,7 +42,7 @@ export default function MessagesPage() {
         .from("messages")
         .select("*")
         .is("ticket_id", null)
-        .or(`sender_id.eq.${user.id}`)
+        .eq("client_id", user.id)
         .order("created_at", { ascending: true });
       setMessages(data || []);
     };
@@ -56,7 +57,7 @@ export default function MessagesPage() {
         { event: "INSERT", schema: "public", table: "messages" },
         (payload) => {
           const msg = payload.new as Message;
-          if (!msg.ticket_id && (msg.sender_id === user.id || msg.is_admin)) {
+          if (!msg.ticket_id && msg.client_id === user.id) {
             setMessages((prev) => [...prev, msg]);
           }
         }
@@ -77,6 +78,7 @@ export default function MessagesPage() {
     const supabase = getSupabaseBrowser();
     await supabase.from("messages").insert([{
       sender_id: user.id,
+      client_id: user.id,
       content: newMessage.trim(),
       is_admin: false,
       ticket_id: null,
@@ -94,7 +96,7 @@ export default function MessagesPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar
         items={sidebarItems}
         userName={profile?.full_name || "Client"}
@@ -110,11 +112,11 @@ export default function MessagesPage() {
         </div>
 
         {/* FAQ Section */}
-        <div className="shrink-0 mb-6 bg-card border border-border p-4">
+        <GlassCard className="shrink-0 mb-6">
           <p className="font-mono text-[10px] text-blue tracking-wider uppercase mb-3">FAQ</p>
           <div className="space-y-0">
             {faqs.map((faq, i) => (
-              <div key={i} className="border-b border-border last:border-0">
+              <div key={i} className="last:border-0" style={{ borderBottom: i < faqs.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   className="w-full text-left py-3 flex items-center justify-between text-sm text-text hover:text-blue transition-colors"
@@ -128,10 +130,10 @@ export default function MessagesPage() {
               </div>
             ))}
           </div>
-        </div>
+        </GlassCard>
 
         {/* Chat */}
-        <div className="flex-1 overflow-y-auto bg-card border border-border p-4 space-y-4 mb-4">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 mb-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: "1rem" }}>
           {messages.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-offwhite text-sm">No messages yet. Say hello!</p>
@@ -139,7 +141,7 @@ export default function MessagesPage() {
           ) : (
             messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.is_admin ? "justify-start" : "justify-end"}`}>
-                <div className={`max-w-[70%] p-3 ${msg.is_admin ? "bg-surface border border-border" : "bg-blue/10 border border-blue/20"}`}>
+                <div className={`max-w-[70%] p-3 rounded-xl ${msg.is_admin ? "" : "bg-blue/10 border border-blue/20"}`} style={msg.is_admin ? { background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" } : undefined}>
                   <p className="font-mono text-[10px] text-offwhite tracking-wider uppercase mb-1">
                     {msg.is_admin ? "RG Devs" : "You"}
                   </p>
@@ -160,7 +162,8 @@ export default function MessagesPage() {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 bg-card border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none"
+            className="flex-1 bg-transparent border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none"
+            style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)", borderRadius: "0.5rem" }}
           />
           <button
             type="submit"

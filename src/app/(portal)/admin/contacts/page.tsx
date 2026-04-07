@@ -6,6 +6,7 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { Contact } from "@/lib/types";
 import PortalSidebar from "@/components/PortalSidebar";
 import StatusBadge from "@/components/StatusBadge";
+import GlassCard from "@/components/GlassCard";
 
 const sidebarItems = [
   { label: "Overview", href: "/admin", icon: "overview" },
@@ -41,17 +42,17 @@ export default function AdminContactsPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar items={sidebarItems} userName={profile?.full_name || "Admin"} role="Admin" onSignOut={signOut} />
       <main className="flex-1 ml-60 p-8">
         <span className="font-mono text-blue text-xs tracking-wider">/ CONTACTS</span>
         <h1 className="font-anton text-4xl uppercase mt-2 mb-8 text-text">Form <span className="text-blue">Submissions.</span></h1>
 
-        <div className="bg-card border border-border">
+        <GlassCard noPadding>
           {contacts.length === 0 ? <div className="p-12 text-center"><p className="text-offwhite text-sm">No submissions yet</p></div> : (
-            <div className="divide-y divide-border">
+            <div>
               {contacts.map((contact) => (
-                <div key={contact.id} className="p-5">
+                <div key={contact.id} className="p-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                   <div className="flex items-center justify-between mb-2 cursor-pointer" onClick={() => setExpanded(expanded === contact.id ? null : contact.id)}>
                     <div className="flex items-center gap-4">
                       <StatusBadge status={contact.status || "new"} />
@@ -61,12 +62,12 @@ export default function AdminContactsPage() {
                     <span className="text-xs text-offwhite font-mono">{new Date(contact.created_at).toLocaleDateString()}</span>
                   </div>
                   {expanded === contact.id && (
-                    <div className="mt-3 pt-3 border-t border-border">
+                    <div className="mt-3 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                       <p className="text-sm text-offwhite whitespace-pre-wrap mb-3">{contact.message}</p>
                       <div className="flex gap-2">
                         {contact.status !== "read" && (
                           <button onClick={() => markRead(contact.id)}
-                            className="px-3 py-1.5 border border-border text-xs text-text hover:border-blue transition-colors">Mark Read</button>
+                            className="px-3 py-1.5 border text-xs text-text hover:border-blue transition-colors" style={{ borderColor: "rgba(255,255,255,0.1)" }}>Mark Read</button>
                         )}
                         <a href={`mailto:${contact.email}`}
                           className="px-3 py-1.5 bg-blue text-white text-xs hover:bg-blue-light transition-colors">Reply via Email</a>
@@ -77,7 +78,7 @@ export default function AdminContactsPage() {
               ))}
             </div>
           )}
-        </div>
+        </GlassCard>
       </main>
     </div>
   );

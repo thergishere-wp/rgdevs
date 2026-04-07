@@ -4,6 +4,7 @@ import { useState, FormEvent } from "react";
 import { useAuth } from "@/lib/useAuth";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import PortalSidebar from "@/components/PortalSidebar";
+import GlassCard from "@/components/GlassCard";
 
 const sidebarItems = [
   { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
@@ -52,7 +53,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar items={sidebarItems} userName={profile?.full_name || "Client"} role="Client" onSignOut={signOut} />
       <main className="flex-1 ml-60 p-8">
         <span className="font-mono text-blue text-xs tracking-wider">/ SETTINGS</span>
@@ -62,7 +63,7 @@ export default function SettingsPage() {
 
         <div className="max-w-xl space-y-8">
           {/* Profile */}
-          <div className="bg-card border border-border p-6">
+          <GlassCard>
             <h2 className="font-barlow font-semibold text-text mb-4">Profile</h2>
             <form onSubmit={handleSave} className="space-y-4">
               <div>
@@ -71,7 +72,8 @@ export default function SettingsPage() {
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full bg-bg border border-border px-4 py-3 text-sm text-text focus:border-blue focus:outline-none"
+                  className="w-full bg-transparent border px-4 py-3 text-sm text-text focus:border-blue focus:outline-none"
+                  style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)", borderRadius: "0.5rem" }}
                 />
               </div>
               <div>
@@ -80,7 +82,8 @@ export default function SettingsPage() {
                   type="email"
                   value={user?.email || ""}
                   disabled
-                  className="w-full bg-bg border border-border px-4 py-3 text-sm text-offwhite opacity-50"
+                  className="w-full bg-transparent border px-4 py-3 text-sm text-offwhite opacity-50"
+                  style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)", borderRadius: "0.5rem" }}
                 />
               </div>
               <div>
@@ -95,10 +98,10 @@ export default function SettingsPage() {
                 {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
               </button>
             </form>
-          </div>
+          </GlassCard>
 
           {/* Password */}
-          <div className="bg-card border border-border p-6">
+          <GlassCard>
             <h2 className="font-barlow font-semibold text-text mb-4">Change Password</h2>
             <form onSubmit={handlePasswordChange} className="space-y-4">
               <input
@@ -107,7 +110,8 @@ export default function SettingsPage() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="New password (min 6 chars)"
                 minLength={6}
-                className="w-full bg-bg border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none"
+                className="w-full bg-transparent border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none"
+                style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)", borderRadius: "0.5rem" }}
               />
               <button
                 type="submit"
@@ -116,7 +120,7 @@ export default function SettingsPage() {
                 {passwordSaved ? "Updated!" : "Update Password"}
               </button>
             </form>
-          </div>
+          </GlassCard>
         </div>
       </main>
     </div>

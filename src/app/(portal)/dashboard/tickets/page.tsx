@@ -7,6 +7,7 @@ import { Ticket, Platform } from "@/lib/types";
 import PortalSidebar from "@/components/PortalSidebar";
 import StatusBadge from "@/components/StatusBadge";
 import Link from "next/link";
+import GlassCard from "@/components/GlassCard";
 
 const sidebarItems = [
   { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
@@ -81,7 +82,7 @@ export default function TicketsPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar
         items={sidebarItems}
         userName={profile?.full_name || "Client"}
@@ -108,18 +109,19 @@ export default function TicketsPage() {
         </div>
 
         {/* Ticket list */}
-        <div className="bg-card border border-border">
+        <GlassCard noPadding>
           {tickets.length === 0 ? (
             <div className="p-12 text-center">
               <p className="text-offwhite text-sm">No tickets yet</p>
             </div>
           ) : (
-            <div className="divide-y divide-border">
-              {tickets.map((ticket) => (
+            <div>
+              {tickets.map((ticket, i) => (
                 <Link
                   key={ticket.id}
                   href={`/dashboard/tickets/${ticket.id}`}
-                  className="flex items-center justify-between p-5 hover:bg-surface transition-colors"
+                  className="flex items-center justify-between p-5 hover:bg-white/[0.02] transition-colors"
+                  style={i < tickets.length - 1 ? { borderBottom: "1px solid rgba(255,255,255,0.04)" } : undefined}
                 >
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-text font-medium truncate">
@@ -137,12 +139,12 @@ export default function TicketsPage() {
               ))}
             </div>
           )}
-        </div>
+        </GlassCard>
 
         {/* New ticket modal */}
         {showModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-card border border-border p-8 w-full max-w-md mx-4">
+            <div className="p-8 w-full max-w-md mx-4 rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.07)", boxShadow: "0 0 40px rgba(0,0,0,0.4)" }}>
               <h2 className="font-anton text-2xl uppercase text-text mb-6">
                 New <span className="text-blue">Request.</span>
               </h2>
@@ -155,7 +157,8 @@ export default function TicketsPage() {
                   onChange={(e) =>
                     setForm((s) => ({ ...s, title: e.target.value }))
                   }
-                  className="w-full bg-bg border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none"
+                  className="w-full bg-transparent border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none"
+                  style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)", borderRadius: "0.5rem" }}
                 />
                 <textarea
                   placeholder="Description"
@@ -164,14 +167,16 @@ export default function TicketsPage() {
                   onChange={(e) =>
                     setForm((s) => ({ ...s, description: e.target.value }))
                   }
-                  className="w-full bg-bg border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none resize-none"
+                  className="w-full bg-transparent border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none resize-none"
+                  style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)", borderRadius: "0.5rem" }}
                 />
                 <select
                   value={form.priority}
                   onChange={(e) =>
                     setForm((s) => ({ ...s, priority: e.target.value }))
                   }
-                  className="w-full bg-bg border border-border px-4 py-3 text-sm text-text focus:border-blue focus:outline-none"
+                  className="w-full bg-transparent border px-4 py-3 text-sm text-text focus:border-blue focus:outline-none"
+                  style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)", borderRadius: "0.5rem" }}
                 >
                   <option value="low">Low Priority</option>
                   <option value="normal">Normal Priority</option>
@@ -184,7 +189,8 @@ export default function TicketsPage() {
                     onChange={(e) =>
                       setForm((s) => ({ ...s, platform_id: e.target.value }))
                     }
-                    className="w-full bg-bg border border-border px-4 py-3 text-sm text-text focus:border-blue focus:outline-none"
+                    className="w-full bg-transparent border px-4 py-3 text-sm text-text focus:border-blue focus:outline-none"
+                    style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)", borderRadius: "0.5rem" }}
                   >
                     <option value="">Select platform</option>
                     {platforms.map((p) => (

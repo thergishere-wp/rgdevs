@@ -6,6 +6,7 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { Platform } from "@/lib/types";
 import PortalSidebar from "@/components/PortalSidebar";
 import StatusBadge from "@/components/StatusBadge";
+import GlassCard from "@/components/GlassCard";
 
 const sidebarItems = [
   { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
@@ -43,7 +44,7 @@ export default function PlatformPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar
         items={sidebarItems}
         userName={profile?.full_name || "Client"}
@@ -60,18 +61,18 @@ export default function PlatformPage() {
         </h1>
 
         {!platform ? (
-          <div className="bg-card border border-border p-12 text-center">
+          <GlassCard className="text-center">
             <h3 className="font-barlow font-semibold text-lg text-text">
               No Platform Yet
             </h3>
             <p className="text-offwhite text-sm mt-2">
               Your platform is being set up. We&apos;ll have it ready soon.
             </p>
-          </div>
+          </GlassCard>
         ) : (
           <div className="space-y-6">
             {/* Status card */}
-            <div className="bg-card border border-border p-6">
+            <GlassCard>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="font-barlow font-bold text-2xl text-text">
                   {platform.name}
@@ -136,10 +137,10 @@ export default function PlatformPage() {
                   </p>
                 </div>
               </div>
-            </div>
+            </GlassCard>
 
             {/* Timeline */}
-            <div className="bg-card border border-border p-6">
+            <GlassCard>
               <h3 className="font-barlow font-semibold text-text mb-4">
                 Status Timeline
               </h3>
@@ -163,7 +164,7 @@ export default function PlatformPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </GlassCard>
           </div>
         )}
       </main>

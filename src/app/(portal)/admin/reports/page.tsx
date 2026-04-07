@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/useAuth";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { Profile, Platform, Report } from "@/lib/types";
 import PortalSidebar from "@/components/PortalSidebar";
+import GlassCard from "@/components/GlassCard";
 
 const sidebarItems = [
   { label: "Overview", href: "/admin", icon: "overview" },
@@ -61,7 +62,7 @@ export default function AdminReportsPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar items={sidebarItems} userName={adminProfile?.full_name || "Admin"} role="Admin" onSignOut={signOut} />
       <main className="flex-1 ml-60 p-8">
         <div className="flex items-center justify-between mb-8">
@@ -75,38 +76,40 @@ export default function AdminReportsPage() {
         </div>
 
         {showForm && (
-          <form onSubmit={handleSubmit} className="bg-card border border-border p-6 mb-8 space-y-4">
+          <GlassCard className="mb-8">
+            <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <select required value={form.client_id} onChange={(e) => setForm((s) => ({ ...s, client_id: e.target.value }))}
-                className="bg-bg border border-border px-4 py-3 text-sm text-text focus:border-blue focus:outline-none">
+                className="bg-transparent border rounded-lg px-4 py-3 text-sm text-text focus:border-blue focus:outline-none" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}>
                 <option value="">Select client</option>
                 {clients.map((c) => <option key={c.id} value={c.id}>{c.full_name || c.email}</option>)}
               </select>
               <select value={form.platform_id} onChange={(e) => setForm((s) => ({ ...s, platform_id: e.target.value }))}
-                className="bg-bg border border-border px-4 py-3 text-sm text-text focus:border-blue focus:outline-none">
+                className="bg-transparent border rounded-lg px-4 py-3 text-sm text-text focus:border-blue focus:outline-none" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}>
                 <option value="">Select platform</option>
                 {platforms.filter((p) => p.client_id === form.client_id).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
               <input type="text" required placeholder="Month (e.g. April 2026)" value={form.month} onChange={(e) => setForm((s) => ({ ...s, month: e.target.value }))}
-                className="bg-bg border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none" />
+                className="bg-transparent border rounded-lg px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }} />
             </div>
             <input type="number" step="0.1" placeholder="Uptime %" value={form.uptime_percent} onChange={(e) => setForm((s) => ({ ...s, uptime_percent: e.target.value }))}
-              className="w-full bg-bg border border-border px-4 py-3 text-sm text-text focus:border-blue focus:outline-none" />
+              className="w-full bg-transparent border rounded-lg px-4 py-3 text-sm text-text focus:border-blue focus:outline-none" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }} />
             <textarea placeholder="Updates made (one per line)" rows={3} value={form.updates_made} onChange={(e) => setForm((s) => ({ ...s, updates_made: e.target.value }))}
-              className="w-full bg-bg border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none resize-none" />
+              className="w-full bg-transparent border rounded-lg px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none resize-none" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }} />
             <textarea placeholder="Notes" rows={2} value={form.notes} onChange={(e) => setForm((s) => ({ ...s, notes: e.target.value }))}
-              className="w-full bg-bg border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none resize-none" />
+              className="w-full bg-transparent border rounded-lg px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none resize-none" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }} />
             <button type="submit" disabled={saving} className="px-6 py-2.5 bg-blue text-white text-sm font-medium tracking-wide hover:bg-blue-light transition-colors disabled:opacity-50">
               {saving ? "Creating..." : "Create Report"}
             </button>
-          </form>
+            </form>
+          </GlassCard>
         )}
 
-        <div className="bg-card border border-border">
+        <GlassCard noPadding>
           {reports.length === 0 ? <div className="p-12 text-center"><p className="text-offwhite text-sm">No reports yet</p></div> : (
-            <div className="divide-y divide-border">
+            <div>
               {reports.map((report) => (
-                <div key={report.id} className="p-5 flex items-center justify-between">
+                <div key={report.id} className="p-5 flex items-center justify-between" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                   <div>
                     <p className="text-sm text-text font-medium">{report.month}</p>
                     <p className="text-xs text-offwhite font-mono mt-1">
@@ -118,7 +121,7 @@ export default function AdminReportsPage() {
               ))}
             </div>
           )}
-        </div>
+        </GlassCard>
       </main>
     </div>
   );

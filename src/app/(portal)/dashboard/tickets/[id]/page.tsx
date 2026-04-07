@@ -7,7 +7,6 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { Ticket, Message } from "@/lib/types";
 import PortalSidebar from "@/components/PortalSidebar";
 import StatusBadge from "@/components/StatusBadge";
-
 const sidebarItems = [
   { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
   { label: "My Platform", href: "/dashboard/platform", icon: "platform" },
@@ -102,6 +101,7 @@ export default function TicketDetailPage() {
       {
         ticket_id: ticketId,
         sender_id: user.id,
+        client_id: user.id,
         content: newMessage.trim(),
         is_admin: false,
       },
@@ -120,7 +120,7 @@ export default function TicketDetailPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar
         items={sidebarItems}
         userName={profile?.full_name || "Client"}
@@ -149,7 +149,7 @@ export default function TicketDetailPage() {
         )}
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto bg-card border border-border p-4 space-y-4 mb-4">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 mb-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: "1rem" }}>
           {messages.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-offwhite text-sm">
@@ -165,11 +165,12 @@ export default function TicketDetailPage() {
                 }`}
               >
                 <div
-                  className={`max-w-[70%] p-3 ${
+                  className={`max-w-[70%] p-3 rounded-xl ${
                     msg.is_admin
-                      ? "bg-surface border border-border"
+                      ? ""
                       : "bg-blue/10 border border-blue/20"
                   }`}
+                  style={msg.is_admin ? { background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" } : undefined}
                 >
                   <p className="font-mono text-[10px] text-offwhite tracking-wider uppercase mb-1">
                     {msg.is_admin ? "RG Devs" : "You"}
@@ -194,7 +195,8 @@ export default function TicketDetailPage() {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 bg-card border border-border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none"
+            className="flex-1 bg-transparent border px-4 py-3 text-sm text-text placeholder:text-offwhite/30 focus:border-blue focus:outline-none"
+            style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)", borderRadius: "0.5rem" }}
           />
           <button
             type="submit"

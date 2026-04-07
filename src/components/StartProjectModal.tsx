@@ -74,6 +74,7 @@ export default function StartProjectModal({ isOpen, onClose }: StartProjectModal
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      if (backdropRef.current) backdropRef.current.scrollTop = 0;
       setStep(1);
       setSelectedType("");
       setSelectedPlan("");
@@ -180,6 +181,11 @@ export default function StartProjectModal({ isOpen, onClose }: StartProjectModal
         background: "rgba(6,6,8,0.92)",
         backdropFilter: "blur(8px)",
         WebkitBackdropFilter: "blur(8px)",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflowY: "auto",
       }}
     >
       <div

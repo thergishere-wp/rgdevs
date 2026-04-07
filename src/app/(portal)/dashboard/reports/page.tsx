@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/useAuth";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { Report } from "@/lib/types";
 import PortalSidebar from "@/components/PortalSidebar";
+import GlassCard from "@/components/GlassCard";
 
 const sidebarItems = [
   { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
@@ -40,7 +41,7 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar items={sidebarItems} userName={profile?.full_name || "Client"} role="Client" onSignOut={signOut} />
       <main className="flex-1 ml-60 p-8">
         <span className="font-mono text-blue text-xs tracking-wider">/ REPORTS</span>
@@ -49,17 +50,17 @@ export default function ReportsPage() {
         </h1>
 
         {reports.length === 0 ? (
-          <div className="bg-card border border-border p-12 text-center">
+          <GlassCard className="text-center">
             <h3 className="font-barlow font-semibold text-lg text-text">No Reports Yet</h3>
             <p className="text-offwhite text-sm mt-2">Monthly reports will appear here once your platform is live.</p>
-          </div>
+          </GlassCard>
         ) : (
           <div className="space-y-3">
             {reports.map((report) => (
-              <div key={report.id} className="bg-card border border-border">
+              <GlassCard key={report.id} noPadding>
                 <button
                   onClick={() => setExpanded(expanded === report.id ? null : report.id)}
-                  className="w-full p-5 flex items-center justify-between text-left hover:bg-surface transition-colors"
+                  className="w-full p-5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors"
                 >
                   <div className="flex items-center gap-4">
                     <span className="font-mono text-sm text-blue">{report.month}</span>
@@ -73,7 +74,7 @@ export default function ReportsPage() {
                   </div>
                 </button>
                 {expanded === report.id && (
-                  <div className="px-5 pb-5 border-t border-border pt-4 space-y-3">
+                  <div className="px-5 pb-5 pt-4 space-y-3" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                     {report.updates_made && report.updates_made.length > 0 && (
                       <div>
                         <p className="font-mono text-[10px] text-offwhite tracking-wider uppercase mb-2">Updates Made</p>
@@ -94,7 +95,7 @@ export default function ReportsPage() {
                     )}
                   </div>
                 )}
-              </div>
+              </GlassCard>
             ))}
           </div>
         )}

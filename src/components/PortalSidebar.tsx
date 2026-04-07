@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
 
 interface NavItem {
@@ -86,7 +86,6 @@ export default function PortalSidebar({
   onSignOut,
 }: PortalSidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -99,16 +98,16 @@ export default function PortalSidebar({
         borderRight: "1px solid rgba(255,255,255,0.06)",
       }}
     >
-      {/* Logo — navigate home without signing out */}
+      {/* Logo — navigate home, session stays alive */}
       <div className="p-6 border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-        <button
-          onClick={() => router.push("/")}
-          className="text-lg font-anton tracking-tight uppercase"
+        <a
+          href="/"
+          className="text-lg font-anton tracking-tight uppercase inline-block"
         >
           <span className="text-text">RG</span>
           <span className="text-blue">.</span>
           <span className="text-text">DEVS</span>
-        </button>
+        </a>
         <p className="font-mono text-[10px] text-offwhite tracking-[0.2em] uppercase mt-1">
           {role} Portal
         </p>

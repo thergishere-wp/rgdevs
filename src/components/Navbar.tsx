@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
+import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import AuthModal from "./AuthModal";
 import StartProjectModal from "./StartProjectModal";
 import Link from "next/link";
@@ -11,6 +12,8 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [projectOpen, setProjectOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
@@ -19,6 +22,29 @@ export default function Navbar() {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Check auth state
+  useEffect(() => {
+    const supabase = getSupabaseBrowser();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setIsLoggedIn(true);
+        supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", session.user.id)
+          .single()
+          .then(({ data }) => setUserRole(data?.role || "client"));
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session?.user);
+      if (!session?.user) setUserRole(null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const navigateTo = (sectionId: string) => {
@@ -113,13 +139,22 @@ export default function Navbar() {
             </span>
           </button>
 
-          {/* Login */}
-          <button
-            onClick={() => setAuthOpen(true)}
-            className="hidden md:inline text-sm text-offwhite hover:text-text transition-colors font-mono tracking-wide"
-          >
-            Login
-          </button>
+          {/* Login / Dashboard */}
+          {isLoggedIn ? (
+            <Link
+              href={userRole === "admin" ? "/admin" : "/dashboard"}
+              className="hidden md:inline text-sm text-offwhite hover:text-text transition-colors font-mono tracking-wide"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <button
+              onClick={() => setAuthOpen(true)}
+              className="hidden md:inline text-sm text-offwhite hover:text-text transition-colors font-mono tracking-wide"
+            >
+              Login
+            </button>
+          )}
 
           {/* Start a Project CTA */}
           <button

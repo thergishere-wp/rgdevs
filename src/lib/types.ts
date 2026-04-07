@@ -39,6 +39,7 @@ export interface Message {
   id: string;
   ticket_id: string | null;
   sender_id: string;
+  client_id: string | null;
   content: string;
   is_admin: boolean;
   read: boolean;
