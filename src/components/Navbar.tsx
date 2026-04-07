@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
+import AuthModal from "./AuthModal";
 import Link from "next/link";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
@@ -111,22 +113,25 @@ export default function Navbar() {
           </button>
 
           {/* Login */}
-          <Link
-            href="/login"
+          <button
+            onClick={() => setAuthOpen(true)}
             className="hidden md:inline text-sm text-offwhite hover:text-text transition-colors font-mono tracking-wide"
           >
             Login
-          </Link>
+          </button>
 
           {/* CTA */}
           <button
-            onClick={() => navigateTo("contact")}
+            onClick={() => setAuthOpen(true)}
             className="px-5 py-2 text-sm border border-blue text-blue hover:bg-blue hover:text-white transition-all duration-300 tracking-wide"
           >
             Start Free
           </button>
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </nav>
   );
 }
