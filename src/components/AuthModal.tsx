@@ -216,18 +216,18 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         perspective: "1200px",
       }}
     >
-      {/* Ambient glow */}
+      {/* Ambient glow — subtle */}
       <div
         ref={glowRef}
         className="absolute pointer-events-none"
         style={{
-          width: "500px",
-          height: "500px",
-          background: "radial-gradient(circle, rgba(0,112,243,0.15) 0%, transparent 70%)",
+          width: "600px",
+          height: "600px",
+          background: "radial-gradient(circle, rgba(0,112,243,0.08) 0%, transparent 65%)",
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          filter: "blur(60px)",
+          filter: "blur(80px)",
         }}
       />
 
@@ -237,20 +237,30 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         className="relative w-full max-w-md"
         style={{ transformStyle: "preserve-3d" }}
       >
-        {/* Animated rotating border glow */}
-        <div
-          className="absolute -inset-[1px] overflow-hidden"
-          style={{ opacity: 0.7 }}
-        >
+        {/* Fluid water-light border — 3 layers drifting at different speeds */}
+        <div className="absolute -inset-[1px] overflow-hidden opacity-30">
+          {/* Layer 1: slow drift top-left → bottom-right */}
           <div
-            className="absolute"
+            className="absolute inset-0"
             style={{
-              width: "200%",
-              height: "200%",
-              top: "-50%",
-              left: "-50%",
-              background: "conic-gradient(from 0deg, transparent, var(--color-blue), transparent, transparent, var(--color-blue), transparent)",
-              animation: "spinBorder 4s linear infinite",
+              background: "radial-gradient(ellipse 120% 80% at 20% 20%, rgba(0,112,243,0.6), transparent 60%)",
+              animation: "drift1 8s ease-in-out infinite alternate",
+            }}
+          />
+          {/* Layer 2: medium drift bottom-right → top-left */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "radial-gradient(ellipse 80% 120% at 80% 80%, rgba(0,112,243,0.4), transparent 55%)",
+              animation: "drift2 6s ease-in-out infinite alternate",
+            }}
+          />
+          {/* Layer 3: gentle pulse center-ish */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "radial-gradient(ellipse 100% 60% at 50% 50%, rgba(0,112,243,0.25), transparent 50%)",
+              animation: "drift3 10s ease-in-out infinite alternate",
             }}
           />
         </div>
@@ -478,14 +488,45 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         </div>
       </div>
 
-      {/* CSS for smooth border spin */}
+      {/* CSS for fluid water-light drifting */}
       <style jsx>{`
-        @keyframes spinBorder {
-          from {
-            transform: rotate(0deg);
+        @keyframes drift1 {
+          0% {
+            transform: translate(-15%, -10%) scale(1);
+            opacity: 0.6;
           }
-          to {
-            transform: rotate(360deg);
+          50% {
+            opacity: 1;
+          }
+          100% {
+            transform: translate(15%, 10%) scale(1.15);
+            opacity: 0.4;
+          }
+        }
+        @keyframes drift2 {
+          0% {
+            transform: translate(10%, 15%) scale(1.1);
+            opacity: 0.5;
+          }
+          50% {
+            opacity: 0.8;
+          }
+          100% {
+            transform: translate(-20%, -10%) scale(0.95);
+            opacity: 0.7;
+          }
+        }
+        @keyframes drift3 {
+          0% {
+            transform: translate(5%, -5%) scale(0.9) rotate(-3deg);
+            opacity: 0.3;
+          }
+          50% {
+            opacity: 0.7;
+          }
+          100% {
+            transform: translate(-5%, 8%) scale(1.2) rotate(3deg);
+            opacity: 0.5;
           }
         }
       `}</style>
