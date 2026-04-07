@@ -173,7 +173,7 @@ export default function CTA() {
         {/* Contact form */}
         <div id="contact-form" className="mt-16">
           {submitted ? (
-            <div className="bg-card border border-blue/30 p-8">
+            <div className="glass p-8 rounded-2xl border-blue/30">
               <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-blue/20 flex items-center justify-center">
                 <svg
                   width="24"

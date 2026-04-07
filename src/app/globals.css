@@ -25,6 +25,8 @@
   --gradient-bottom: linear-gradient(to top, #060608, transparent);
   --outline-stroke: rgba(255, 255, 255, 0.08);
   --scrollbar-track: #060608;
+  --glass-process-bg: rgba(255, 255, 255, 0.04);
+  --glass-process-border: rgba(255, 255, 255, 0.08);
 }
 
 [data-theme="light"] {
@@ -45,6 +47,8 @@
   --gradient-bottom: linear-gradient(to top, #F5F0E8, transparent);
   --outline-stroke: rgba(10, 15, 44, 0.08);
   --scrollbar-track: #F5F0E8;
+  --glass-process-bg: rgba(10, 15, 44, 0.04);
+  --glass-process-border: rgba(10, 15, 44, 0.08);
 }
 
 /* ── Reset & Base ── */
@@ -229,4 +233,83 @@ img {
   border-radius: 50%;
   background: #22c55e;
   animation: status-pulse 2s ease-in-out infinite;
+}
+
+/* ══════════════════════════════════════════
+   GLASSMORPHISM UTILITY
+   ══════════════════════════════════════════ */
+
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .glass {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(10, 15, 44, 0.1);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .glass-strong {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(10, 15, 44, 0.12);
+}
+
+/* ══════════════════════════════════════════
+   GLOBAL INPUT STYLES (DARK / LIGHT)
+   ══════════════════════════════════════════ */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  caret-color: #0055FF;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #0055FF !important;
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(0, 85, 255, 0.2);
+}
+
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="email"],
+[data-theme="light"] input[type="password"],
+[data-theme="light"] input[type="tel"],
+[data-theme="light"] input[type="number"],
+[data-theme="light"] input[type="url"],
+[data-theme="light"] input[type="search"],
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  background: rgba(10, 15, 44, 0.06) !important;
+  color: #0A0F2C !important;
+  border: 1px solid rgba(10, 15, 44, 0.12) !important;
+}
+
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: rgba(10, 15, 44, 0.35) !important;
 }

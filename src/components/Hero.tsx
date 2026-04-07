@@ -1,11 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const VIDEO_SOURCES = [
+  "https://videos.pexels.com/video-files/5894094/5894094-hd_1920_1080_30fps.mp4",
+  "https://videos.pexels.com/video-files/3130284/3130284-hd_1920_1080_24fps.mp4",
+  "https://videos.pexels.com/video-files/2278095/2278095-hd_1920_1080_24fps.mp4",
+];
+
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1600&q=80";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -19,6 +28,48 @@ export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
   const numberRef = useRef<HTMLSpanElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+
+  // Detect mobile
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // Video source fallback chain
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || isMobile) return;
+
+    let sourceIndex = 0;
+
+    const tryNext = () => {
+      if (sourceIndex < VIDEO_SOURCES.length) {
+        video.src = VIDEO_SOURCES[sourceIndex];
+        video.load();
+        sourceIndex++;
+      } else {
+        setVideoFailed(true);
+      }
+    };
+
+    const onError = () => tryNext();
+    const onCanPlay = () => {
+      video.play().catch(() => setVideoFailed(true));
+    };
+
+    video.addEventListener("error", onError);
+    video.addEventListener("canplay", onCanPlay);
+    tryNext();
+
+    return () => {
+      video.removeEventListener("error", onError);
+      video.removeEventListener("canplay", onCanPlay);
+    };
+  }, [isMobile]);
 
   // Particle network
   useEffect(() => {
@@ -51,7 +102,6 @@ export default function Hero() {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw connections
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -61,14 +111,13 @@ export default function Hero() {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(0,85,255,${0.15 * (1 - dist / 150)})`;
+            ctx.strokeStyle = `rgba(0,85,255,${0.5 * (1 - dist / 150)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
         }
       }
 
-      // Draw and update particles
       particles.forEach((p) => {
         p.x += p.vx;
         p.y += p.vy;
@@ -76,7 +125,7 @@ export default function Hero() {
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
         ctx.beginPath();
         ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(0,85,255,0.6)";
+        ctx.fillStyle = "rgba(0,85,255,0.5)";
         ctx.fill();
       });
 
@@ -162,35 +211,39 @@ export default function Hero() {
       className="relative h-screen w-full overflow-hidden flex items-end"
       onMouseMove={handleMouseMove}
     >
-      {/* Video background */}
+      {/* Video / Image background */}
       <div className="absolute inset-0">
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-30"
-          poster="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80"
-        >
-          <source
-            src="https://videos.pexels.com/video-files/5894094/5894094-hd_1920_1080_30fps.mp4"
-            type="video/mp4"
+        {/* Video — hidden on mobile or if failed */}
+        {!isMobile && !videoFailed && (
+          <video
+            ref={videoRef}
+            muted
+            autoPlay
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ opacity: 0.35 }}
           />
-        </video>
-        {/* Fallback image behind video */}
+        )}
+        {/* Fallback image — always behind, visible on mobile or video fail */}
         <Image
-          src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80"
+          src={FALLBACK_IMAGE}
           alt="Code on screen"
           fill
-          className="object-cover -z-10"
+          className="object-cover"
+          style={{ opacity: isMobile || videoFailed ? 0.3 : 0 }}
           priority
           sizes="100vw"
         />
       </div>
 
-      {/* Overlays */}
-      <div className="absolute inset-0 bg-bg/50" />
+      {/* Dark overlay */}
+      <div
+        className="absolute inset-0"
+        style={{ background: "rgba(6,6,8,0.65)" }}
+      />
+
+      {/* Gradient overlays */}
       <div
         className="absolute inset-0"
         style={{ background: "var(--gradient-overlay)" }}
@@ -200,8 +253,15 @@ export default function Hero() {
         style={{ background: "var(--gradient-bottom)" }}
       />
 
-      {/* Scanlines */}
-      <div className="absolute inset-0 scanlines pointer-events-none" />
+      {/* Scanlines — 2% opacity */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          opacity: 0.02,
+          backgroundImage:
+            "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.05) 2px, rgba(255,255,255,0.05) 4px)",
+        }}
+      />
 
       {/* Particle network canvas */}
       <canvas

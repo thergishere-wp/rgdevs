@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -57,6 +57,8 @@ export default function Pricing() {
   const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [activeDot, setActiveDot] = useState(0);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (spotlightRef.current) {
@@ -94,9 +96,109 @@ export default function Pricing() {
     return () => ctx.revert();
   }, []);
 
+  // Mobile scroll snap observer
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+
+    const handleScroll = () => {
+      const scrollLeft = el.scrollLeft;
+      const cardWidth = el.offsetWidth * 0.85 + 16; // 85% + gap
+      const idx = Math.round(scrollLeft / cardWidth);
+      setActiveDot(Math.min(idx, tiers.length - 1));
+    };
+
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const renderCard = (tier: (typeof tiers)[0], mobile = false) => (
+    <div
+      key={tier.name}
+      className={`relative flex flex-col rounded-2xl p-8 ${
+        mobile ? "flex-shrink-0" : ""
+      } ${
+        tier.popular ? "pro-glow" : ""
+      }`}
+      style={{
+        background: "var(--glass-process-bg, rgba(255,255,255,0.03))",
+        backdropFilter: "blur(24px)",
+        WebkitBackdropFilter: "blur(24px)",
+        border: tier.popular
+          ? "1px solid rgba(0,85,255,0.4)"
+          : "1px solid var(--glass-process-border, rgba(255,255,255,0.08))",
+        ...(mobile ? { width: "85vw", minWidth: "85vw" } : {}),
+      }}
+    >
+      {tier.popular && (
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue text-white text-xs font-mono px-3 py-1 tracking-wider uppercase rounded-sm">
+          Most Popular
+        </span>
+      )}
+
+      <div className="mb-6">
+        <h3 className="font-barlow font-semibold text-lg text-text">
+          {tier.name}
+        </h3>
+        <div className="flex items-baseline gap-1 mt-3">
+          <span className="font-anton text-5xl text-text">${tier.price}</span>
+          <span className="text-offwhite text-sm">/month</span>
+        </div>
+        <p className="text-offwhite text-xs mt-3 leading-relaxed">
+          Best for: {tier.best}
+        </p>
+      </div>
+
+      <div className="border-t border-border/30 pt-6 mb-8 flex-1">
+        <p className="font-mono text-xs text-blue/60 tracking-wider uppercase mb-4">
+          Includes
+        </p>
+        <ul className="space-y-3">
+          {tier.features.map((feature, fi) => (
+            <li
+              key={fi}
+              className="flex items-start gap-3 text-sm text-offwhite"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                className="mt-0.5 shrink-0 text-blue"
+              >
+                <path
+                  d="M2 7L5.5 10.5L12 3.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+              </svg>
+              {feature}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="text-center">
+        <p className="font-mono text-xs text-blue mb-4 tracking-wider">
+          FREE FIRST MONTH
+        </p>
+        <button
+          onClick={() => scrollTo("contact")}
+          className={`w-full py-3 text-sm font-medium tracking-wide transition-all duration-300 rounded-lg ${
+            tier.popular
+              ? "bg-blue text-white hover:bg-blue-light"
+              : "border border-border/50 text-text hover:border-blue hover:text-blue"
+          }`}
+        >
+          Get Started
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <section
@@ -120,91 +222,84 @@ export default function Pricing() {
             Simple <span className="text-blue">Pricing.</span>
           </h2>
           <p className="text-offwhite text-sm mt-4 max-w-lg mx-auto">
-            1 year contract. First month free. Domain cost ($10-15/yr) paid by
-            client.
+            All plans are 1-year contracts. First month completely free. Domain
+            ($10–15/yr) is the only client-side cost.
           </p>
         </div>
 
+        {/* Desktop: 3 columns */}
         <div
           ref={cardsRef}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto"
+          className="hidden md:grid grid-cols-3 gap-6 max-w-5xl mx-auto"
         >
-          {tiers.map((tier) => (
-            <div
-              key={tier.name}
-              className={`relative bg-card border p-8 flex flex-col ${
-                tier.popular
-                  ? "border-blue pro-glow"
-                  : "border-border"
-              }`}
-            >
-              {tier.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue text-white text-xs font-mono px-3 py-1 tracking-wider uppercase">
-                  Most Popular
-                </span>
-              )}
+          {tiers.map((tier) => renderCard(tier))}
+        </div>
 
-              <div className="mb-6">
-                <h3 className="font-barlow font-semibold text-lg text-text">
-                  {tier.name}
-                </h3>
-                <div className="flex items-baseline gap-1 mt-3">
-                  <span className="font-anton text-5xl text-text">
-                    ${tier.price}
-                  </span>
-                  <span className="text-offwhite text-sm">/month</span>
-                </div>
-                <p className="text-offwhite text-xs mt-3 leading-relaxed">
-                  Best for: {tier.best}
-                </p>
+        {/* Mobile: horizontal snap carousel */}
+        <div className="md:hidden">
+          <div
+            ref={scrollContainerRef}
+            className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-6 -mx-2 px-2"
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              WebkitOverflowScrolling: "touch",
+            }}
+          >
+            <style jsx>{`
+              div::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
+            {tiers.map((tier) => (
+              <div key={tier.name} className="snap-center">
+                {renderCard(tier, true)}
               </div>
+            ))}
+          </div>
 
-              <div className="border-t border-border pt-6 mb-8 flex-1">
-                <p className="font-mono text-xs text-blue/60 tracking-wider uppercase mb-4">
-                  Includes
-                </p>
-                <ul className="space-y-3">
-                  {tier.features.map((feature, i) => (
-                    <li
-                      key={i}
-                      className="flex items-start gap-3 text-sm text-offwhite"
-                    >
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 14 14"
-                        fill="none"
-                        className="mt-0.5 shrink-0 text-blue"
-                      >
-                        <path
-                          d="M2 7L5.5 10.5L12 3.5"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                        />
-                      </svg>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+          {/* Dot indicators */}
+          <div className="flex justify-center gap-2 mt-4">
+            {tiers.map((_, i) => (
+              <button
+                key={i}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  activeDot === i
+                    ? "bg-blue w-6"
+                    : "bg-offwhite/20"
+                }`}
+                onClick={() => {
+                  const el = scrollContainerRef.current;
+                  if (el) {
+                    const cardWidth = el.offsetWidth * 0.85 + 16;
+                    el.scrollTo({ left: i * cardWidth, behavior: "smooth" });
+                  }
+                }}
+              />
+            ))}
+          </div>
+        </div>
 
-              <div className="text-center">
-                <p className="font-mono text-xs text-blue mb-4 tracking-wider">
-                  FREE FIRST MONTH
-                </p>
-                <button
-                  onClick={() => scrollTo("contact")}
-                  className={`w-full py-3 text-sm font-medium tracking-wide transition-all duration-300 ${
-                    tier.popular
-                      ? "bg-blue text-white hover:bg-blue-light"
-                      : "border border-border text-text hover:border-blue hover:text-blue"
-                  }`}
-                >
-                  Get Started
-                </button>
-              </div>
-            </div>
-          ))}
+        {/* Custom enterprise row */}
+        <div
+          className="mt-12 max-w-5xl mx-auto rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4"
+          style={{
+            background: "var(--glass-process-bg, rgba(255,255,255,0.03))",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            border: "1px solid var(--glass-process-border, rgba(255,255,255,0.08))",
+          }}
+        >
+          <p className="text-offwhite text-sm text-center md:text-left">
+            Need something more? Custom enterprise solutions are available for
+            complex requirements. Pricing based on scope.
+          </p>
+          <button
+            onClick={() => scrollTo("contact")}
+            className="px-6 py-2.5 border border-blue text-blue text-sm font-medium tracking-wide hover:bg-blue hover:text-white transition-all duration-300 rounded-lg shrink-0"
+          >
+            Talk to Us
+          </button>
         </div>
       </div>
     </section>

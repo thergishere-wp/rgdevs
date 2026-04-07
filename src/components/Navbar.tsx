@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
 import AuthModal from "./AuthModal";
+import StartProjectModal from "./StartProjectModal";
 import Link from "next/link";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [projectOpen, setProjectOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
@@ -19,7 +21,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Smart navigation: scroll if on homepage, navigate if on another page
   const navigateTo = (sectionId: string) => {
     if (pathname === "/") {
       document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
@@ -120,18 +121,19 @@ export default function Navbar() {
             Login
           </button>
 
-          {/* CTA */}
+          {/* Start a Project CTA */}
           <button
-            onClick={() => setAuthOpen(true)}
-            className="px-5 py-2 text-sm border border-blue text-blue hover:bg-blue hover:text-white transition-all duration-300 tracking-wide"
+            onClick={() => setProjectOpen(true)}
+            className="px-5 py-2 text-sm border border-blue text-blue hover:bg-blue hover:text-white transition-all duration-300 tracking-wide rounded-lg"
           >
-            Start Free
+            Start a Project
           </button>
         </div>
       </div>
 
-      {/* Auth Modal */}
+      {/* Modals */}
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
+      <StartProjectModal isOpen={projectOpen} onClose={() => setProjectOpen(false)} />
     </nav>
   );
 }

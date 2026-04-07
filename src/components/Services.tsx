@@ -160,7 +160,7 @@ export default function Services() {
             {services.map((service) => (
               <div
                 key={service.num}
-                className="service-card group bg-card border border-border p-6 hover:border-blue/30 transition-all duration-500 relative overflow-hidden"
+                className="service-card group glass p-6 hover:border-blue/30 transition-all duration-500 relative overflow-hidden rounded-2xl"
                 style={{ transformStyle: "preserve-3d" }}
               >
                 <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

@@ -13,6 +13,7 @@ import HorizontalScroll from "@/components/HorizontalScroll";
 import Process from "@/components/Process";
 import Stats from "@/components/Stats";
 import Pricing from "@/components/Pricing";
+import FAQ from "@/components/FAQ";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 
@@ -65,6 +66,7 @@ export default function Home() {
         <Process />
         <Stats />
         <Pricing />
+        <FAQ />
         <CTA />
       </main>
       <Footer />

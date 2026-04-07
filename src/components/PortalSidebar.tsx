@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
 
 interface NavItem {
@@ -86,18 +86,30 @@ export default function PortalSidebar({
   onSignOut,
 }: PortalSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-60 bg-sidebar border-r border-sidebar-border flex flex-col z-50">
-      {/* Logo */}
-      <div className="p-6 border-b border-sidebar-border">
-        <Link href="/" className="text-lg font-bold tracking-tight">
+    <aside
+      className="fixed left-0 top-0 h-screen w-60 flex flex-col z-50"
+      style={{
+        background: "rgba(12,12,16,0.95)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderRight: "1px solid rgba(255,255,255,0.06)",
+      }}
+    >
+      {/* Logo — navigate home without signing out */}
+      <div className="p-6 border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+        <button
+          onClick={() => router.push("/")}
+          className="text-lg font-anton tracking-tight uppercase"
+        >
           <span className="text-text">RG</span>
           <span className="text-blue">.</span>
           <span className="text-text">DEVS</span>
-        </Link>
-        <p className="font-mono text-[10px] text-offwhite tracking-wider uppercase mt-1">
+        </button>
+        <p className="font-mono text-[10px] text-offwhite tracking-[0.2em] uppercase mt-1">
           {role} Portal
         </p>
       </div>
@@ -115,44 +127,88 @@ export default function PortalSidebar({
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 text-sm transition-all duration-200 ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
                 isActive
-                  ? "text-blue border-l-2 border-blue bg-blue/5"
-                  : "text-offwhite hover:text-text hover:bg-surface border-l-2 border-transparent"
+                  ? "text-blue border-l-[3px] border-blue"
+                  : "text-offwhite hover:text-text border-l-[3px] border-transparent"
               }`}
+              style={{
+                background: isActive
+                  ? "rgba(0,85,255,0.08)"
+                  : "transparent",
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  (e.currentTarget as HTMLElement).style.background = "transparent";
+                }
+              }}
             >
               <span className="shrink-0">
                 {icons[item.icon] || icons.dashboard}
               </span>
-              <span className="font-barlow">{item.label}</span>
+              <span className="font-mono text-[11px] tracking-[0.15em] uppercase">
+                {item.label}
+              </span>
             </Link>
           );
         })}
       </nav>
 
       {/* Bottom */}
-      <div className="p-4 border-t border-sidebar-border space-y-3">
+      <div className="p-4 space-y-3" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         {/* Theme toggle */}
         <button
           onClick={toggleTheme}
-          className="flex items-center gap-2 text-offwhite hover:text-text transition-colors w-full px-3 py-2"
+          className="flex items-center gap-2 text-offwhite hover:text-text transition-colors w-full px-3 py-2 rounded-lg"
+          style={{ background: "transparent" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
         >
           <span className="text-xs">{theme === "dark" ? "☀" : "☾"}</span>
-          <span className="font-mono text-xs tracking-wider">
+          <span className="font-mono text-[10px] tracking-[0.2em]">
             {theme === "dark" ? "LIGHT" : "DARK"}
           </span>
         </button>
 
         {/* User info */}
-        <div className="px-3">
-          <p className="text-xs font-medium text-text truncate">{userName}</p>
-          <button
-            onClick={onSignOut}
-            className="text-[10px] font-mono text-offwhite hover:text-red-400 transition-colors tracking-wider uppercase mt-1"
+        <div className="px-3 flex items-center gap-3">
+          {/* Avatar */}
+          <div
+            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-mono text-blue"
+            style={{
+              background: "rgba(0,85,255,0.12)",
+              border: "1px solid rgba(0,85,255,0.2)",
+            }}
           >
-            Sign Out
-          </button>
+            {userName.charAt(0).toUpperCase()}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-text truncate">{userName}</p>
+            <span
+              className="inline-block text-[9px] font-mono tracking-wider uppercase px-1.5 py-0.5 rounded mt-0.5"
+              style={{
+                background: role === "Admin" ? "rgba(0,85,255,0.12)" : "rgba(0,255,120,0.12)",
+                color: role === "Admin" ? "#4488FF" : "#00FF78",
+              }}
+            >
+              {role}
+            </span>
+          </div>
         </div>
+
+        <button
+          onClick={onSignOut}
+          className="w-full text-left px-3 py-2 text-[10px] font-mono text-offwhite/50 hover:text-red-400 transition-colors tracking-[0.15em] uppercase rounded-lg"
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+        >
+          Sign Out
+        </button>
       </div>
     </aside>
   );
