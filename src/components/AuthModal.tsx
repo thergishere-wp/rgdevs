@@ -237,14 +237,23 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         className="relative w-full max-w-md"
         style={{ transformStyle: "preserve-3d" }}
       >
-        {/* Animated border glow */}
+        {/* Animated rotating border glow */}
         <div
-          className="absolute -inset-[1px] opacity-60"
-          style={{
-            background: "linear-gradient(135deg, var(--color-blue), transparent 40%, transparent 60%, var(--color-blue))",
-            animation: "borderRotate 4s linear infinite",
-          }}
-        />
+          className="absolute -inset-[1px] overflow-hidden"
+          style={{ opacity: 0.7 }}
+        >
+          <div
+            className="absolute"
+            style={{
+              width: "200%",
+              height: "200%",
+              top: "-50%",
+              left: "-50%",
+              background: "conic-gradient(from 0deg, transparent, var(--color-blue), transparent, transparent, var(--color-blue), transparent)",
+              animation: "spinBorder 4s linear infinite",
+            }}
+          />
+        </div>
 
         <div className="relative bg-card/95 backdrop-blur-xl border border-border/50 p-8 overflow-hidden">
           {/* Scanline effect */}
@@ -469,53 +478,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         </div>
       </div>
 
-      {/* CSS for border animation */}
+      {/* CSS for smooth border spin */}
       <style jsx>{`
-        @keyframes borderRotate {
-          0% {
-            background: linear-gradient(
-              0deg,
-              var(--color-blue),
-              transparent 40%,
-              transparent 60%,
-              var(--color-blue)
-            );
+        @keyframes spinBorder {
+          from {
+            transform: rotate(0deg);
           }
-          25% {
-            background: linear-gradient(
-              90deg,
-              var(--color-blue),
-              transparent 40%,
-              transparent 60%,
-              var(--color-blue)
-            );
-          }
-          50% {
-            background: linear-gradient(
-              180deg,
-              var(--color-blue),
-              transparent 40%,
-              transparent 60%,
-              var(--color-blue)
-            );
-          }
-          75% {
-            background: linear-gradient(
-              270deg,
-              var(--color-blue),
-              transparent 40%,
-              transparent 60%,
-              var(--color-blue)
-            );
-          }
-          100% {
-            background: linear-gradient(
-              360deg,
-              var(--color-blue),
-              transparent 40%,
-              transparent 60%,
-              var(--color-blue)
-            );
+          to {
+            transform: rotate(360deg);
           }
         }
       `}</style>
