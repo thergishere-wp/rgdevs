@@ -1,305 +1,505 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
-gsap.registerPlugin(ScrollTrigger);
+interface PricingTier {
+  name: string;
+  description: string;
+  price: string;
+  range: string;
+  features: string[];
+  featured?: boolean;
+  reveal: {
+    label: string;
+    headline: string;
+    perfectFor: string;
+    body: string;
+  };
+}
 
-const tiers = [
+const tiers: PricingTier[] = [
   {
     name: "Starter",
-    price: 20,
-    best: "Simple company websites, landing pages, portfolios",
+    description: "For founders who just need to look real, fast.",
+    price: "$25",
+    range: "$20 — $30 RANGE",
     features: [
-      "Professional company website",
-      "Up to 5 pages",
-      "Contact form",
-      "Mobile responsive",
-      "Hosting & maintenance",
-      "Monthly updates",
+      "Marketing site, up to 6 pages",
+      "CMS so you can edit copy",
+      "SEO + analytics setup",
+      "Hosting + SSL included",
+      "Monthly content updates",
     ],
-    popular: false,
+    reveal: {
+      label: "Deeper look · Starter",
+      headline: "A fast, SEO-ready marketing site that actually converts — not a template from 2019.",
+      perfectFor: "Restaurants, consultants, service businesses, personal brands, local shops going online for the first time.",
+      body: "We build the visual system, copy structure, and page flows from scratch. You get editable content, real performance scores, and analytics wired up day one.",
+    },
   },
   {
-    name: "Pro",
-    price: 25,
-    best: "Web apps, booking systems, client portals, dashboards",
+    name: "Commerce",
+    description: "Sell online without giving Shopify a kidney.",
+    price: "$75",
+    range: "$65 — $85 RANGE",
     features: [
+      "Storefront + checkout",
+      "Stripe / Shopify payments",
+      "Inventory + abandoned-cart",
+      "Email + SMS automations",
       "Everything in Starter",
-      "Full web application",
-      "User authentication",
-      "Database integration",
-      "Real-time features",
-      "Payment integration",
-      "Priority support",
     ],
-    popular: true,
+    featured: true,
+    reveal: {
+      label: "Deeper look · Commerce",
+      headline: "A storefront built for selling — fast, owned, and hooked into every channel you care about.",
+      perfectFor: "Product brands, boutique retailers, creators selling digital products.",
+      body: "We handle storefront, checkout, inventory, and email flows. You focus on the product. Integrates with Shopify, Stripe, Klaviyo and the rest — your data stays yours.",
+    },
   },
   {
-    name: "Enterprise",
-    price: 30,
-    best: "ERP systems, inventory management, employee platforms, complex multi-module systems",
+    name: "Platform",
+    description: "Internal tools, ERPs, mobile apps with real backends.",
+    price: "$125",
+    range: "$85 — $200 RANGE",
     features: [
-      "Everything in Pro",
-      "Multi-module ERP systems",
-      "Advanced reporting & analytics",
-      "Employee & inventory management",
-      "Custom integrations",
-      "Dedicated support",
-      "Version upgrades included",
+      "Custom platform or mobile app",
+      "Auth, roles, database, APIs",
+      "iOS + Android via one codebase",
+      "Dedicated build channel",
+      "Everything in Commerce",
     ],
-    popular: false,
+    reveal: {
+      label: "Deeper look · Platform",
+      headline: "The full build — database, auth, roles, APIs, everything your product needs to run.",
+      perfectFor: "Founders building internal tools, SaaS MVPs, client portals, ERP systems, or mobile apps for iOS and Android.",
+      body: "One codebase ships to web, iOS, and Android. Production infrastructure, role-based access, audit logs, integrations — plus a dedicated build channel for rapid iteration.",
+    },
   },
 ];
 
-export default function Pricing() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-  const spotlightRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [activeDot, setActiveDot] = useState(0);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (spotlightRef.current) {
-      const rect = sectionRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      spotlightRef.current.style.background = `radial-gradient(500px circle at ${x}px ${y}px, rgba(0,85,255,0.05), transparent 70%)`;
-    }
-  }, []);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const cards = cardsRef.current?.children;
-      if (cards) {
-        gsap.fromTo(
-          cards,
-          { opacity: 0, y: 80, scale: 0.95 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.7,
-            stagger: 0.15,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: cardsRef.current,
-              start: "top 85%",
-            },
-          }
-        );
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  // Mobile scroll snap observer
-  useEffect(() => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-
-    const handleScroll = () => {
-      const scrollLeft = el.scrollLeft;
-      const cardWidth = el.offsetWidth * 0.85 + 16; // 85% + gap
-      const idx = Math.round(scrollLeft / cardWidth);
-      setActiveDot(Math.min(idx, tiers.length - 1));
-    };
-
-    el.addEventListener("scroll", handleScroll, { passive: true });
-    return () => el.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const renderCard = (tier: (typeof tiers)[0], mobile = false) => (
-    <div
-      key={tier.name}
-      className={`relative flex flex-col rounded-2xl p-8 ${
-        mobile ? "flex-shrink-0" : ""
-      } ${
-        tier.popular ? "pro-glow" : ""
-      }`}
-      style={{
-        background: "var(--glass-process-bg, rgba(255,255,255,0.03))",
-        backdropFilter: "blur(24px)",
-        WebkitBackdropFilter: "blur(24px)",
-        border: tier.popular
-          ? "1px solid rgba(0,85,255,0.4)"
-          : "1px solid var(--glass-process-border, rgba(255,255,255,0.08))",
-        ...(mobile ? { width: "85vw", minWidth: "85vw" } : {}),
-      }}
+function CheckIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className="shrink-0 mt-0.5"
+      aria-hidden="true"
     >
-      {tier.popular && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue text-white text-xs font-mono px-3 py-1 tracking-wider uppercase rounded-sm">
-          Most Popular
-        </span>
+      <path d="M2 7l3 3 7-7" />
+    </svg>
+  );
+}
+
+function TierCard({ tier }: { tier: PricingTier }) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      className="relative flex flex-col cursor-pointer"
+      style={{ perspective: "1400px", minHeight: "480px" }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {tier.featured && (
+        <div
+          className="absolute z-30"
+          style={{
+            top: "-1px",
+            right: "24px",
+            background: "var(--cyan)",
+            color: "#001015",
+            fontFamily: "var(--font-jetbrains), monospace",
+            fontSize: "10px",
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            padding: "6px 12px",
+            fontWeight: 600,
+          }}
+          aria-label="Most picked tier"
+        >
+          Most picked
+        </div>
       )}
 
-      <div className="mb-6">
-        <h3 className="font-barlow font-semibold text-lg text-text">
-          {tier.name}
-        </h3>
-        <div className="flex items-baseline gap-1 mt-3">
-          <span className="font-anton text-5xl text-text">${tier.price}</span>
-          <span className="text-offwhite text-sm">/month</span>
-        </div>
-        <p className="text-offwhite text-xs mt-3 leading-relaxed">
-          Best for: {tier.best}
-        </p>
-      </div>
-
-      <div className="border-t border-border/30 pt-6 mb-8 flex-1">
-        <p className="font-mono text-xs text-blue/60 tracking-wider uppercase mb-4">
-          Includes
-        </p>
-        <ul className="space-y-3">
-          {tier.features.map((feature, fi) => (
-            <li
-              key={fi}
-              className="flex items-start gap-3 text-sm text-offwhite"
+      {/* Front panel */}
+      <AnimatePresence>
+        {!hovered && (
+          <motion.div
+            key="front"
+            initial={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.96 }}
+            transition={{ duration: 0.35, ease: [0.22, 0.8, 0.2, 1] }}
+            className="absolute inset-0 flex flex-col p-8 md:p-9"
+            style={{ pointerEvents: hovered ? "none" : "auto" }}
+          >
+            <h3
+              style={{
+                fontFamily: "var(--font-space-grotesk), sans-serif",
+                fontWeight: 600,
+                fontSize: "22px",
+                letterSpacing: "-0.01em",
+              }}
             >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 14 14"
-                fill="none"
-                className="mt-0.5 shrink-0 text-blue"
+              {tier.name}
+            </h3>
+            <p
+              className="mt-1.5"
+              style={{ color: "var(--muted)", fontSize: "13px", lineHeight: 1.5 }}
+            >
+              {tier.description}
+            </p>
+            <div className="mt-7 flex items-baseline gap-1.5">
+              <span
+                style={{
+                  fontFamily: "var(--font-space-grotesk), sans-serif",
+                  fontWeight: 700,
+                  fontSize: "54px",
+                  letterSpacing: "-0.03em",
+                  color: tier.featured ? "var(--cyan)" : "var(--text)",
+                  textShadow: tier.featured ? "0 0 28px rgba(0,245,255,0.35)" : "none",
+                }}
               >
-                <path
-                  d="M2 7L5.5 10.5L12 3.5"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                />
-              </svg>
-              {feature}
-            </li>
-          ))}
-        </ul>
-      </div>
+                {tier.price}
+              </span>
+              <span
+                style={{
+                  fontFamily: "var(--font-jetbrains), monospace",
+                  fontSize: "13px",
+                  color: "var(--muted)",
+                }}
+              >
+                /month
+              </span>
+            </div>
+            <div
+              className="mt-1.5"
+              style={{
+                fontFamily: "var(--font-jetbrains), monospace",
+                fontSize: "11px",
+                color: "var(--dim)",
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+              }}
+            >
+              {tier.range}
+            </div>
+            <ul className="mt-7 flex flex-col gap-3 flex-1">
+              {tier.features.map((f, i) => (
+                <li
+                  key={i}
+                  className="flex items-start gap-3"
+                  style={{ fontSize: "14px", color: "#C8CCE0" }}
+                >
+                  <span style={{ color: "var(--cyan)" }}>
+                    <CheckIcon />
+                  </span>
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <a
+              href="#contact"
+              className="mt-7 block py-3.5 text-center transition-all duration-200 cursor-pointer"
+              style={
+                tier.featured
+                  ? {
+                      background: "var(--cyan)",
+                      color: "#001015",
+                      fontFamily: "var(--font-jetbrains), monospace",
+                      fontSize: "11px",
+                      letterSpacing: "0.22em",
+                      textTransform: "uppercase",
+                      fontWeight: 600,
+                    }
+                  : {
+                      border: "1px solid var(--line-2)",
+                      fontFamily: "var(--font-jetbrains), monospace",
+                      fontSize: "11px",
+                      letterSpacing: "0.22em",
+                      textTransform: "uppercase",
+                      color: "var(--text)",
+                    }
+              }
+              onMouseEnter={(e) => {
+                if (!tier.featured) {
+                  e.currentTarget.style.borderColor = "var(--cyan)";
+                  e.currentTarget.style.color = "var(--cyan)";
+                  e.currentTarget.style.boxShadow = "var(--glow)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!tier.featured) {
+                  e.currentTarget.style.borderColor = "var(--line-2)";
+                  e.currentTarget.style.color = "var(--text)";
+                  e.currentTarget.style.boxShadow = "none";
+                }
+              }}
+            >
+              Start free month →
+            </a>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <div className="text-center">
-        <p className="font-mono text-xs text-blue mb-4 tracking-wider">
-          FREE FIRST MONTH
-        </p>
-        <button
-          onClick={() => scrollTo("contact")}
-          className={`w-full py-3 text-sm font-medium tracking-wide transition-all duration-300 rounded-lg ${
-            tier.popular
-              ? "bg-blue text-white hover:bg-blue-light"
-              : "border border-border/50 text-text hover:border-blue hover:text-blue"
-          }`}
-        >
-          Get Started
-        </button>
-      </div>
+      {/* Reveal panel */}
+      <AnimatePresence>
+        {hovered && (
+          <motion.div
+            key="reveal"
+            initial={{ opacity: 0, y: 18, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 18, scale: 0.96 }}
+            transition={{ duration: 0.45, ease: [0.22, 0.8, 0.2, 1] }}
+            className="absolute inset-0 flex flex-col gap-4 z-20"
+            style={{
+              padding: tier.featured ? "52px 32px 32px" : "32px",
+              background: "linear-gradient(180deg, #0C0C1F 0%, #070714 100%)",
+              boxShadow: "inset 0 0 0 1px var(--cyan), 0 30px 80px rgba(0,0,0,0.5), inset 0 0 80px rgba(0,245,255,0.08)",
+            }}
+          >
+            <div
+              className="flex items-center gap-2.5"
+              style={{
+                fontFamily: "var(--font-jetbrains), monospace",
+                fontSize: "10px",
+                color: "var(--cyan)",
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
+              }}
+            >
+              <span
+                className="w-5 h-px shrink-0"
+                style={{ background: "var(--cyan)", boxShadow: "0 0 8px var(--cyan)" }}
+                aria-hidden="true"
+              />
+              {tier.reveal.label}
+            </div>
+            <h4
+              style={{
+                fontFamily: "var(--font-space-grotesk), sans-serif",
+                fontWeight: 600,
+                fontSize: "22px",
+                letterSpacing: "-0.01em",
+                lineHeight: 1.2,
+                color: "var(--text)",
+              }}
+            >
+              {tier.reveal.headline}
+            </h4>
+            <div
+              className="p-3.5"
+              style={{
+                border: "1px dashed var(--line-2)",
+                fontFamily: "var(--font-jetbrains), monospace",
+                fontSize: "11px",
+                color: "var(--muted)",
+                letterSpacing: "0.08em",
+                lineHeight: 1.65,
+              }}
+            >
+              <b
+                style={{
+                  color: "var(--cyan)",
+                  fontWeight: 500,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  marginRight: "8px",
+                }}
+              >
+                Perfect for
+              </b>
+              {tier.reveal.perfectFor}
+            </div>
+            <p style={{ fontSize: "14px", color: "#C8CCE0", lineHeight: 1.65 }}>
+              {tier.reveal.body}
+            </p>
+            <a
+              href="#contact"
+              className="mt-auto block py-3.5 text-center cursor-pointer transition-all duration-200"
+              style={{
+                background: "var(--cyan)",
+                color: "#001015",
+                fontFamily: "var(--font-jetbrains), monospace",
+                fontSize: "11px",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                fontWeight: 600,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#7CFEFF";
+                e.currentTarget.style.letterSpacing = "0.28em";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "var(--cyan)";
+                e.currentTarget.style.letterSpacing = "0.22em";
+              }}
+            >
+              Start free month →
+            </a>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
+}
+
+export default function Pricing() {
+  const revealRefs = useRef<(HTMLElement | null)[]>([]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("opacity-100", "translate-y-0");
+            e.target.classList.remove("opacity-0", "translate-y-7");
+            observer.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    revealRefs.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <section
-      ref={sectionRef}
       id="pricing"
-      className="relative py-24 md:py-32"
-      onMouseMove={handleMouseMove}
+      className="relative z-10"
+      style={{ padding: "140px 32px", borderTop: "1px solid var(--line)" }}
     >
-      {/* Cursor spotlight */}
-      <div
-        ref={spotlightRef}
-        className="absolute inset-0 pointer-events-none z-0"
-      />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <span className="font-mono text-blue text-sm tracking-wider">
-            03 / PRICING
-          </span>
-          <h2 className="font-anton text-[clamp(2.5rem,5vw,4rem)] uppercase leading-[0.95] mt-4 text-text">
-            Simple <span className="text-blue">Pricing.</span>
-          </h2>
-          <p className="text-offwhite text-sm mt-4 max-w-lg mx-auto">
-            All plans are 1-year contracts. First month completely free. Domain
-            ($10–15/yr) is the only client-side cost.
-          </p>
-        </div>
-
-        {/* Desktop: 3 columns */}
+      <div className="max-w-[1280px] mx-auto">
+        {/* Header row */}
         <div
-          ref={cardsRef}
-          className="hidden md:grid grid-cols-3 gap-6 max-w-5xl mx-auto"
+          ref={(el) => { revealRefs.current[0] = el; }}
+          className="flex items-end justify-between gap-12 flex-wrap opacity-0 translate-y-7 transition-all duration-700"
         >
-          {tiers.map((tier) => renderCard(tier))}
-        </div>
+          <div>
+            <div
+              className="flex items-center gap-2.5"
+              style={{
+                fontFamily: "var(--font-jetbrains), monospace",
+                fontSize: "11px",
+                color: "var(--cyan)",
+                letterSpacing: "0.3em",
+                textTransform: "uppercase",
+              }}
+            >
+              <span style={{ color: "var(--dim)" }}>04 ▍</span>
+              Pricing
+              <span className="flex-1 h-px max-w-[80px]" style={{ background: "var(--line)" }} aria-hidden="true" />
+            </div>
+            <h2
+              className="mt-4"
+              style={{
+                fontFamily: "var(--font-space-grotesk), sans-serif",
+                fontWeight: 700,
+                fontSize: "clamp(40px, 5.4vw, 76px)",
+                lineHeight: 0.98,
+                letterSpacing: "-0.025em",
+              }}
+            >
+              Subscribe.
+              <br />
+              Don&apos;t{" "}
+              <em style={{ fontStyle: "normal", color: "var(--cyan)", textShadow: "0 0 32px rgba(0,245,255,0.35)" }}>
+                commit
+              </em>
+              .
+            </h2>
+          </div>
 
-        {/* Mobile: horizontal snap carousel */}
-        <div className="md:hidden">
+          {/* Free badge */}
           <div
-            ref={scrollContainerRef}
-            className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-6 -mx-2 px-2"
+            className="relative px-5 py-3.5"
             style={{
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-              WebkitOverflowScrolling: "touch",
+              border: "1px solid var(--cyan)",
+              fontFamily: "var(--font-jetbrains), monospace",
+              fontSize: "12px",
+              color: "var(--cyan)",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              boxShadow: "var(--glow)",
             }}
           >
-            <style jsx>{`
-              div::-webkit-scrollbar {
-                display: none;
-              }
-            `}</style>
-            {tiers.map((tier) => (
-              <div key={tier.name} className="snap-center">
-                {renderCard(tier, true)}
-              </div>
-            ))}
-          </div>
-
-          {/* Dot indicators */}
-          <div className="flex justify-center gap-2 mt-4">
-            {tiers.map((_, i) => (
-              <button
-                key={i}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  activeDot === i
-                    ? "bg-blue w-6"
-                    : "bg-offwhite/20"
-                }`}
-                onClick={() => {
-                  const el = scrollContainerRef.current;
-                  if (el) {
-                    const cardWidth = el.offsetWidth * 0.85 + 16;
-                    el.scrollTo({ left: i * cardWidth, behavior: "smooth" });
-                  }
-                }}
-              />
-            ))}
+            {/* Corner decorators */}
+            <span
+              className="absolute -left-px -top-px w-3 h-3"
+              style={{ borderTop: "1px solid var(--cyan)", borderLeft: "1px solid var(--cyan)" }}
+              aria-hidden="true"
+            />
+            <span
+              className="absolute -right-px -bottom-px w-3 h-3"
+              style={{ borderBottom: "1px solid var(--cyan)", borderRight: "1px solid var(--cyan)" }}
+              aria-hidden="true"
+            />
+            First month — free, no card
           </div>
         </div>
 
-        {/* Custom enterprise row */}
+        {/* Tier cards */}
         <div
-          className="mt-12 max-w-5xl mx-auto rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4"
+          ref={(el) => { revealRefs.current[1] = el; }}
+          className="mt-16 opacity-0 translate-y-7 transition-all duration-700 delay-150 grid grid-cols-1 md:grid-cols-3"
           style={{
-            background: "var(--glass-process-bg, rgba(255,255,255,0.03))",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            border: "1px solid var(--glass-process-border, rgba(255,255,255,0.08))",
+            gap: "1px",
+            border: "1px solid var(--line)",
+            background: "var(--line)",
           }}
         >
-          <p className="text-offwhite text-sm text-center md:text-left">
-            Need something more? Custom enterprise solutions are available for
-            complex requirements. Pricing based on scope.
-          </p>
-          <button
-            onClick={() => scrollTo("contact")}
-            className="px-6 py-2.5 border border-blue text-blue text-sm font-medium tracking-wide hover:bg-blue hover:text-white transition-all duration-300 rounded-lg shrink-0"
+          {tiers.map((tier, i) => (
+            <div
+              key={i}
+              className="relative"
+              style={{
+                background: tier.featured ? "#0B0B1B" : "var(--surface)",
+                outline: tier.featured ? "1px solid var(--cyan)" : "none",
+                outlineOffset: "-1px",
+                boxShadow: tier.featured ? "var(--glow)" : "none",
+                zIndex: tier.featured ? 1 : 0,
+              }}
+            >
+              <TierCard tier={tier} />
+            </div>
+          ))}
+        </div>
+
+        {/* Upfront note */}
+        <div
+          ref={(el) => { revealRefs.current[2] = el; }}
+          className="mt-8 flex items-center gap-4 opacity-0 translate-y-7 transition-all duration-700 delay-200"
+          style={{
+            padding: "18px 22px",
+            border: "1px dashed var(--line-2)",
+            color: "var(--muted)",
+            fontSize: "13px",
+            fontFamily: "var(--font-jetbrains), monospace",
+            letterSpacing: "0.05em",
+          }}
+        >
+          <span
+            style={{
+              color: "var(--cyan)",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              fontSize: "11px",
+              flexShrink: 0,
+            }}
           >
-            Talk to Us
-          </button>
+            Upfront cost
+          </span>
+          <span style={{ color: "var(--dim)" }}>/</span>
+          <span>
+            You only pay your domain (~
+            <span style={{ color: "var(--text)" }}>$10–15</span>) once. Everything else is the monthly subscription. No setup fees, no design retainers, no contracts.
+          </span>
         </div>
       </div>
     </section>

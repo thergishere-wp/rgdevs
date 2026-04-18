@@ -1,75 +1,53 @@
 "use client";
 
 import { useEffect } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import ThemeProvider from "@/components/ThemeProvider";
-import CustomCursor from "@/components/CustomCursor";
-import Navbar from "@/components/Navbar";
+import BgGrid from "@/components/BgGrid";
+import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
-import Marquee from "@/components/Marquee";
-import Services from "@/components/Services";
-import HorizontalScroll from "@/components/HorizontalScroll";
-import Process from "@/components/Process";
-import Stats from "@/components/Stats";
+import StatsTrustBar from "@/components/StatsTrustBar";
+import WhatWeBuild from "@/components/WhatWeBuild";
+import HowItWorks from "@/components/HowItWorks";
+import WhySubscription from "@/components/WhySubscription";
 import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
-import CTA from "@/components/CTA";
+import Portfolio from "@/components/Portfolio";
+import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import StatusBar from "@/components/StatusBar";
 
 export default function Home() {
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    const images = document.querySelectorAll("img");
-    let loaded = 0;
-    const total = images.length;
-
-    const onLoad = () => {
-      loaded++;
-      if (loaded >= total) ScrollTrigger.refresh();
+    // Smooth scroll for anchor links
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLAnchorElement;
+      const href = target.closest("a")?.getAttribute("href");
+      if (!href?.startsWith("#")) return;
+      const el = document.querySelector(href);
+      if (!el) return;
+      e.preventDefault();
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
     };
-
-    images.forEach((img) => {
-      if (img.complete) onLoad();
-      else img.addEventListener("load", onLoad);
-    });
-
-    const timeout = setTimeout(() => ScrollTrigger.refresh(), 2000);
-
-    // Handle hash navigation from other pages (e.g. /portfolio -> /#services)
-    const handleHash = () => {
-      const hash = window.location.hash.replace("#", "");
-      if (hash) {
-        setTimeout(() => {
-          document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
-        }, 300);
-      }
-    };
-    handleHash();
-
-    return () => {
-      clearTimeout(timeout);
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-    };
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
   }, []);
 
   return (
-    <ThemeProvider>
-      <CustomCursor />
-      <Navbar />
-      <main>
-        <Hero />
-        <Marquee />
-        <Services />
-        <HorizontalScroll />
-        <Process />
-        <Stats />
-        <Pricing />
-        <FAQ />
-        <CTA />
-      </main>
+    <main className="min-h-screen" style={{ background: "var(--bg)" }}>
+      <BgGrid />
+      <Nav />
+      <Hero />
+      <StatsTrustBar />
+      <WhatWeBuild />
+      <HowItWorks />
+      <WhySubscription />
+      <Pricing />
+      <FAQ />
+      <Portfolio />
+      <Contact />
       <Footer />
-    </ThemeProvider>
+      <StatusBar />
+      {/* Bottom padding for fixed status bar */}
+      <div className="h-10" />
+    </main>
   );
 }

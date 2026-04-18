@@ -8,16 +8,7 @@ import PortalSidebar from "@/components/PortalSidebar";
 import StatusBadge from "@/components/StatusBadge";
 import Link from "next/link";
 import GlassCard from "@/components/GlassCard";
-
-const sidebarItems = [
-  { label: "Overview", href: "/admin", icon: "overview" },
-  { label: "Clients", href: "/admin/clients", icon: "clients" },
-  { label: "Tickets", href: "/admin/tickets", icon: "tickets" },
-  { label: "Messages", href: "/admin/messages", icon: "messages" },
-  { label: "Portfolio", href: "/admin/portfolio", icon: "portfolio" },
-  { label: "Reports", href: "/admin/reports", icon: "reports" },
-  { label: "Contacts", href: "/admin/contacts", icon: "contacts" },
-];
+import { adminSidebarItems } from "@/lib/sidebar-items";
 
 interface ClientWithPlatform extends Profile {
   platforms: Platform[];
@@ -54,7 +45,7 @@ export default function ClientsPage() {
 
   return (
     <div className="min-h-screen flex" style={{ background: "#060608" }}>
-      <PortalSidebar items={sidebarItems} userName={profile?.full_name || "Admin"} role="Admin" onSignOut={signOut} />
+      <PortalSidebar items={adminSidebarItems} userName={profile?.full_name || "Admin"} role="Admin" onSignOut={signOut} />
       <main className="flex-1 ml-60 p-8">
         <div className="flex items-center justify-between mb-8">
           <div>

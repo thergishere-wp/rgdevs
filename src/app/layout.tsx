@@ -1,22 +1,39 @@
 import type { Metadata } from "next";
+import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-jetbrains",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "RG Devs — Web Platforms Built Different",
+  title: "RG Devs — Built by AI. Delivered fast.",
   description:
-    "We build custom web platforms, ERP systems, dashboards, and booking apps. From $20/month. First month free.",
+    "AI-powered web & mobile development studio. Bangkok, Thailand. Serving businesses, founders, and startups worldwide. From $25/month. First month free.",
   keywords: [
     "web development",
-    "web platforms",
-    "ERP systems",
-    "dashboards",
-    "booking systems",
-    "client portals",
+    "AI development",
+    "mobile apps",
+    "Bangkok",
+    "Thailand",
+    "subscription",
+    "Next.js",
+    "React Native",
   ],
   openGraph: {
-    title: "RG Devs — Web Platforms Built Different",
+    title: "RG Devs — Built by AI. Delivered fast.",
     description:
-      "Custom web platforms from $20/month. Built fast, built right.",
+      "AI-native dev studio. Marketing sites, e-commerce, platforms, mobile apps. From $25/month.",
     type: "website",
   },
 };
@@ -27,31 +44,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="dark" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap"
-          rel="stylesheet"
-        />
-        {/* Prevent flash of wrong theme */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                const t = localStorage.getItem('rg-theme');
-                if (t) document.documentElement.setAttribute('data-theme', t);
-              } catch (e) {}
-            `,
-          }}
-        />
-      </head>
-      <body className="font-barlow antialiased">{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} antialiased`}
+        style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
+      >
+        {children}
+      </body>
     </html>
   );
 }

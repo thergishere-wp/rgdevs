@@ -1,23 +1,20 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { useAuth } from "@/lib/useAuth";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import PortalSidebar from "@/components/PortalSidebar";
 import GlassCard from "@/components/GlassCard";
-
-const sidebarItems = [
-  { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
-  { label: "My Platform", href: "/dashboard/platform", icon: "platform" },
-  { label: "Tickets", href: "/dashboard/tickets", icon: "tickets" },
-  { label: "Messages", href: "/dashboard/messages", icon: "messages" },
-  { label: "Reports", href: "/dashboard/reports", icon: "reports" },
-  { label: "Settings", href: "/dashboard/settings", icon: "settings" },
-];
+import { clientSidebarItems } from "@/lib/sidebar-items";
 
 export default function SettingsPage() {
   const { user, profile, loading, signOut } = useAuth("client");
-  const [fullName, setFullName] = useState(profile?.full_name || "");
+  const [fullName, setFullName] = useState("");
+
+  // Sync when profile loads
+  useEffect(() => {
+    if (profile?.full_name) setFullName(profile.full_name);
+  }, [profile]);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [newPassword, setNewPassword] = useState("");
@@ -54,7 +51,7 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen flex" style={{ background: "#060608" }}>
-      <PortalSidebar items={sidebarItems} userName={profile?.full_name || "Client"} role="Client" onSignOut={signOut} />
+      <PortalSidebar items={clientSidebarItems} userName={profile?.full_name || "Client"} role="Client" onSignOut={signOut} />
       <main className="flex-1 ml-60 p-8">
         <span className="font-mono text-blue text-xs tracking-wider">/ SETTINGS</span>
         <h1 className="font-anton text-4xl uppercase mt-2 mb-8 text-text">

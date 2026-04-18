@@ -77,5 +77,8 @@ export interface Contact {
   email: string;
   message: string;
   status: string;
+  company: string | null;
+  platform_type: string | null;
+  selected_plan: string | null;
   created_at: string;
 }

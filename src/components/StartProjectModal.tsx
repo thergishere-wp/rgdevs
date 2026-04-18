@@ -176,15 +176,11 @@ export default function StartProjectModal({ isOpen, onClose }: StartProjectModal
     <div
       ref={backdropRef}
       onClick={(e) => e.target === backdropRef.current && onClose()}
-      className="fixed inset-0 z-[200] hidden items-center justify-center px-4"
+      className="fixed inset-0 z-[200] hidden flex px-4 py-12"
       style={{
         background: "rgba(6,6,8,0.92)",
         backdropFilter: "blur(8px)",
         WebkitBackdropFilter: "blur(8px)",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
         overflowY: "auto",
       }}
     >
@@ -196,6 +192,7 @@ export default function StartProjectModal({ isOpen, onClose }: StartProjectModal
           backdropFilter: "blur(40px)",
           WebkitBackdropFilter: "blur(40px)",
           border: "1px solid rgba(255,255,255,0.1)",
+          margin: "auto",
         }}
       >
         {/* Progress bar */}

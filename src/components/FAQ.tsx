@@ -1,164 +1,232 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { AnimatePresence, motion } from "framer-motion";
 
-gsap.registerPlugin(ScrollTrigger);
+interface FAQItem {
+  num: string;
+  question: string;
+  answer: string;
+}
 
-const faqs = [
+const faqs: FAQItem[] = [
   {
-    q: "How long does it take to build my platform?",
-    a: "Most platforms are built and live within 48–72 hours for standard builds. Complex ERP systems may take 1–2 weeks. You get weekly progress updates throughout.",
+    num: "Q.01",
+    question: "Do I own my website?",
+    answer:
+      "You always own your domain — it's registered in your name from day one. The platform we build runs on enterprise infrastructure (Vercel, Supabase) and stays live as long as you subscribe. If you ever leave, we hand you the full codebase.",
   },
   {
-    q: "What do I actually need to provide?",
-    a: "Just your domain (website address, ~$10–15/yr) and a conversation about what you need. No technical knowledge or assets required unless you have them.",
+    num: "Q.02",
+    question: "What does \"AI-built\" actually mean?",
+    answer:
+      "We use Claude (Anthropic's AI) to handle the development heavy lifting — writing code, designing components, debugging. A human (us) writes the brief, reviews every output, and makes sure it's right. You get agency-quality results in a fraction of the time.",
   },
   {
-    q: "What happens after the free first month?",
-    a: "You move onto your chosen plan — Starter ($20), Pro ($25), or Enterprise ($30) per month on a 1-year contract. Everything is included: hosting, updates, support.",
+    num: "Q.03",
+    question: "How fast is fast?",
+    answer:
+      "We can have a first draft live within 48 hours of a clear brief. Full builds typically take 3–7 days. Complex platforms, 2–3 weeks. We'll always give you a timeline before we start.",
   },
   {
-    q: "Can I request changes after launch?",
-    a: "Yes. Unlimited change requests are included in your subscription. Submit them through your client portal and we handle them.",
+    num: "Q.04",
+    question: "What if I want to cancel?",
+    answer:
+      "Cancel anytime, no questions asked. There are no contracts, no cancellation fees, no lock-in. Your domain stays yours forever.",
   },
   {
-    q: "What if I need something not in the standard plans?",
-    a: "We offer fully custom solutions for complex requirements. Contact us and we'll scope it specifically for you.",
+    num: "Q.05",
+    question: "Do you work with clients outside Thailand?",
+    answer:
+      "Yes — we're based in Bangkok but fully remote and work with clients globally. All communication is async-friendly and we work across timezones.",
   },
   {
-    q: "Do you work with clients outside Thailand?",
-    a: "Yes. We work remotely with clients globally. Communication is via your client portal and chat.",
-  },
-  {
-    q: "What happens when my 1-year contract ends?",
-    a: "We'll reach out before renewal. You can continue, upgrade your plan, or we can discuss your next phase.",
+    num: "Q.06",
+    question: "Is this just a template?",
+    answer:
+      "Never. Every project is designed and built from scratch for your brand. We use AI to build faster, not to recycle layouts.",
   },
 ];
 
+function FAQItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: boolean; onToggle: () => void }) {
+  return (
+    <div
+      style={{ borderTop: "1px solid var(--line)" }}
+    >
+      <button
+        onClick={onToggle}
+        className="w-full flex justify-between items-center gap-8 px-8 py-6 text-left cursor-pointer transition-colors duration-200"
+        style={{
+          fontFamily: "var(--font-space-grotesk), sans-serif",
+          fontSize: "20px",
+          fontWeight: 500,
+          letterSpacing: "-0.01em",
+          color: isOpen ? "var(--cyan)" : "var(--text)",
+          background: "transparent",
+        }}
+        aria-expanded={isOpen}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "var(--surface-2)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "transparent";
+        }}
+      >
+        <span className="flex items-center">
+          <span
+            className="mr-5"
+            style={{
+              fontFamily: "var(--font-jetbrains), monospace",
+              fontSize: "11px",
+              color: "var(--dim)",
+              letterSpacing: "0.22em",
+            }}
+          >
+            {item.num}
+          </span>
+          {item.question}
+        </span>
+
+        {/* Plus/minus icon */}
+        <span
+          className="w-7 h-7 shrink-0 grid place-items-center relative transition-all duration-300"
+          style={{
+            border: isOpen ? "1px solid var(--cyan)" : "1px solid var(--line-2)",
+            color: isOpen ? "var(--cyan)" : "var(--muted)",
+            boxShadow: isOpen ? "0 0 12px rgba(0,245,255,0.4)" : "none",
+          }}
+          aria-hidden="true"
+        >
+          {/* Horizontal bar */}
+          <span
+            className="absolute w-2.5 h-px"
+            style={{ background: "currentColor" }}
+          />
+          {/* Vertical bar */}
+          <span
+            className="absolute w-px h-2.5 transition-transform duration-300"
+            style={{
+              background: "currentColor",
+              transform: isOpen ? "scaleY(0)" : "scaleY(1)",
+            }}
+          />
+        </span>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            key="answer"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 0.8, 0.2, 1] }}
+            style={{ overflow: "hidden" }}
+          >
+            <div className="px-8 pb-7">
+              <div
+                className="pl-[68px] pt-1"
+                style={{
+                  borderLeft: "1px solid var(--line-2)",
+                  color: "#C8CCE0",
+                  lineHeight: 1.65,
+                  fontSize: "15px",
+                  maxWidth: "72ch",
+                }}
+              >
+                {item.answer}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function FAQ() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<number>(0);
+  const revealRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      itemsRef.current.forEach((item, i) => {
-        if (!item) return;
-        gsap.fromTo(
-          item,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: item,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-            delay: i * 0.05,
+    if (!revealRef.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("opacity-100", "translate-y-0");
+            e.target.classList.remove("opacity-0", "translate-y-7");
+            observer.unobserve(e.target);
           }
-        );
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    observer.observe(revealRef.current);
+    return () => observer.disconnect();
   }, []);
 
-  const toggle = (i: number) => {
-    setOpenIndex(openIndex === i ? null : i);
-  };
-
   return (
-    <section ref={sectionRef} id="faq" className="py-24 md:py-32">
-      <div className="max-w-3xl mx-auto px-6">
+    <section
+      id="faq"
+      className="relative z-10"
+      style={{ padding: "140px 32px", borderTop: "1px solid var(--line)" }}
+    >
+      <div className="max-w-[1280px] mx-auto">
         {/* Header */}
-        <div className="mb-16">
-          <span className="font-mono text-blue text-sm tracking-wider">
-            05 / FAQ
-          </span>
-          <h2 className="font-anton text-[clamp(2.5rem,5vw,4rem)] uppercase leading-[0.95] mt-4 text-text">
-            Questions <span className="text-blue">Answered.</span>
+        <div
+          ref={(el) => { revealRef.current = el; }}
+          className="opacity-0 translate-y-7 transition-all duration-700"
+        >
+          <div
+            className="flex items-center gap-2.5"
+            style={{
+              fontFamily: "var(--font-jetbrains), monospace",
+              fontSize: "11px",
+              color: "var(--cyan)",
+              letterSpacing: "0.3em",
+              textTransform: "uppercase",
+            }}
+          >
+            <span style={{ color: "var(--dim)" }}>05 ▍</span>
+            FAQ
+            <span className="flex-1 h-px max-w-[80px]" style={{ background: "var(--line)" }} aria-hidden="true" />
+          </div>
+          <h2
+            className="mt-4"
+            style={{
+              fontFamily: "var(--font-space-grotesk), sans-serif",
+              fontWeight: 700,
+              fontSize: "clamp(40px, 5.4vw, 76px)",
+              lineHeight: 0.98,
+              letterSpacing: "-0.025em",
+              maxWidth: "14ch",
+            }}
+          >
+            Questions we get a{" "}
+            <em style={{ fontStyle: "normal", color: "var(--cyan)", textShadow: "0 0 32px rgba(0,245,255,0.35)" }}>
+              lot
+            </em>
+            .
           </h2>
         </div>
 
-        {/* Accordion */}
-        <div className="space-y-3">
-          {faqs.map((faq, i) => {
-            const isOpen = openIndex === i;
-            return (
-              <div
-                key={i}
-                ref={(el) => {
-                  itemsRef.current[i] = el;
-                }}
-                className="rounded-2xl overflow-hidden transition-all duration-300"
-                style={{
-                  background:
-                    "var(--glass-process-bg, rgba(255,255,255,0.03))",
-                  backdropFilter: "blur(20px)",
-                  WebkitBackdropFilter: "blur(20px)",
-                  border: isOpen
-                    ? "1px solid rgba(0,85,255,0.3)"
-                    : "1px solid var(--glass-process-border, rgba(255,255,255,0.08))",
-                  borderLeft: isOpen
-                    ? "3px solid rgba(0,85,255,0.8)"
-                    : "1px solid var(--glass-process-border, rgba(255,255,255,0.08))",
-                }}
-              >
-                {/* Question */}
-                <button
-                  onClick={() => toggle(i)}
-                  className="w-full flex items-center justify-between px-6 py-5 text-left group"
-                >
-                  <span
-                    className={`font-barlow font-medium text-sm md:text-base pr-4 transition-colors duration-300 ${
-                      isOpen ? "text-text" : "text-offwhite"
-                    } group-hover:text-text`}
-                  >
-                    {faq.q}
-                  </span>
-                  <span
-                    className={`shrink-0 w-6 h-6 flex items-center justify-center rounded-full transition-all duration-300 ${
-                      isOpen
-                        ? "bg-blue/20 text-blue rotate-45"
-                        : "bg-surface text-blue"
-                    }`}
-                  >
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 12 12"
-                      fill="none"
-                    >
-                      <path
-                        d="M6 1v10M1 6h10"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </span>
-                </button>
-
-                {/* Answer */}
-                <div
-                  className="overflow-hidden transition-all duration-400 ease-in-out"
-                  style={{
-                    maxHeight: isOpen ? "200px" : "0px",
-                    opacity: isOpen ? 1 : 0,
-                  }}
-                >
-                  <p className="px-6 pb-5 text-offwhite text-sm leading-relaxed">
-                    {faq.a}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+        {/* FAQ list */}
+        <div
+          className="mt-16"
+          style={{
+            border: "1px solid var(--line)",
+            background: "var(--surface)",
+          }}
+        >
+          {faqs.map((item, i) => (
+            <FAQItem
+              key={i}
+              item={item}
+              isOpen={openIndex === i}
+              onToggle={() => setOpenIndex(openIndex === i ? -1 : i)}
+            />
+          ))}
         </div>
       </div>
     </section>

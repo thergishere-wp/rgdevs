@@ -7,15 +7,7 @@ import { Platform } from "@/lib/types";
 import PortalSidebar from "@/components/PortalSidebar";
 import StatusBadge from "@/components/StatusBadge";
 import GlassCard from "@/components/GlassCard";
-
-const sidebarItems = [
-  { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
-  { label: "My Platform", href: "/dashboard/platform", icon: "platform" },
-  { label: "Tickets", href: "/dashboard/tickets", icon: "tickets" },
-  { label: "Messages", href: "/dashboard/messages", icon: "messages" },
-  { label: "Reports", href: "/dashboard/reports", icon: "reports" },
-  { label: "Settings", href: "/dashboard/settings", icon: "settings" },
-];
+import { clientSidebarItems } from "@/lib/sidebar-items";
 
 export default function PlatformPage() {
   const { user, profile, loading, signOut } = useAuth("client");
@@ -46,7 +38,7 @@ export default function PlatformPage() {
   return (
     <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar
-        items={sidebarItems}
+        items={clientSidebarItems}
         userName={profile?.full_name || "Client"}
         role="Client"
         onSignOut={signOut}

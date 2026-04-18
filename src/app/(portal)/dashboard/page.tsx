@@ -8,15 +8,7 @@ import PortalSidebar from "@/components/PortalSidebar";
 import StatusBadge from "@/components/StatusBadge";
 import GlassCard from "@/components/GlassCard";
 import Link from "next/link";
-
-const sidebarItems = [
-  { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
-  { label: "My Platform", href: "/dashboard/platform", icon: "platform" },
-  { label: "Tickets", href: "/dashboard/tickets", icon: "tickets" },
-  { label: "Messages", href: "/dashboard/messages", icon: "messages" },
-  { label: "Reports", href: "/dashboard/reports", icon: "reports" },
-  { label: "Settings", href: "/dashboard/settings", icon: "settings" },
-];
+import { clientSidebarItems } from "@/lib/sidebar-items";
 
 export default function DashboardPage() {
   const { user, profile, loading, signOut } = useAuth("client");
@@ -53,20 +45,13 @@ export default function DashboardPage() {
         .in("status", ["open", "in_progress"]);
       setTicketCount(count || 0);
 
+      // Count unread messages (both ticket-scoped and general)
       const { count: msgCount } = await supabase
         .from("messages")
         .select("*", { count: "exact", head: true })
         .eq("read", false)
         .eq("is_admin", true)
-        .in(
-          "ticket_id",
-          (
-            await supabase
-              .from("tickets")
-              .select("id")
-              .eq("client_id", user.id)
-          ).data?.map((t) => t.id) || []
-        );
+        .eq("client_id", user.id);
       setUnreadCount(msgCount || 0);
 
       const { data: ticketsData } = await supabase
@@ -92,7 +77,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar
-        items={sidebarItems}
+        items={clientSidebarItems}
         userName={profile?.full_name || "Client"}
         role="Client"
         onSignOut={signOut}

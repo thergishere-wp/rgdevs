@@ -8,16 +8,7 @@ import StatusBadge from "@/components/StatusBadge";
 import GlassCard from "@/components/GlassCard";
 import Link from "next/link";
 import gsap from "gsap";
-
-const sidebarItems = [
-  { label: "Overview", href: "/admin", icon: "overview" },
-  { label: "Clients", href: "/admin/clients", icon: "clients" },
-  { label: "Tickets", href: "/admin/tickets", icon: "tickets" },
-  { label: "Messages", href: "/admin/messages", icon: "messages" },
-  { label: "Portfolio", href: "/admin/portfolio", icon: "portfolio" },
-  { label: "Reports", href: "/admin/reports", icon: "reports" },
-  { label: "Contacts", href: "/admin/contacts", icon: "contacts" },
-];
+import { adminSidebarItems } from "@/lib/sidebar-items";
 
 interface RecentTicket {
   id: string;
@@ -169,7 +160,7 @@ export default function AdminOverview() {
   return (
     <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar
-        items={sidebarItems}
+        items={adminSidebarItems}
         userName={profile?.full_name || "Admin"}
         role="Admin"
         onSignOut={signOut}
@@ -242,7 +233,7 @@ export default function AdminOverview() {
                 {recentTickets.map((ticket) => (
                   <Link
                     key={ticket.id}
-                    href={`/admin/tickets`}
+                    href={`/admin/tickets/${ticket.id}`}
                     className="flex items-center justify-between px-5 py-3.5 transition-colors duration-200 hover:bg-white/[0.02]"
                     style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                   >

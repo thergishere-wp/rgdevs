@@ -8,15 +8,7 @@ import PortalSidebar from "@/components/PortalSidebar";
 import StatusBadge from "@/components/StatusBadge";
 import Link from "next/link";
 import GlassCard from "@/components/GlassCard";
-
-const sidebarItems = [
-  { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
-  { label: "My Platform", href: "/dashboard/platform", icon: "platform" },
-  { label: "Tickets", href: "/dashboard/tickets", icon: "tickets" },
-  { label: "Messages", href: "/dashboard/messages", icon: "messages" },
-  { label: "Reports", href: "/dashboard/reports", icon: "reports" },
-  { label: "Settings", href: "/dashboard/settings", icon: "settings" },
-];
+import { clientSidebarItems } from "@/lib/sidebar-items";
 
 export default function TicketsPage() {
   const { user, profile, loading, signOut } = useAuth("client");
@@ -84,7 +76,7 @@ export default function TicketsPage() {
   return (
     <div className="min-h-screen flex" style={{ background: "#060608" }}>
       <PortalSidebar
-        items={sidebarItems}
+        items={clientSidebarItems}
         userName={profile?.full_name || "Client"}
         role="Client"
         onSignOut={signOut}
@@ -143,8 +135,8 @@ export default function TicketsPage() {
 
         {/* New ticket modal */}
         {showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="p-8 w-full max-w-md mx-4 rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.07)", boxShadow: "0 0 40px rgba(0,0,0,0.4)" }}>
+          <div className="fixed inset-0 z-50 flex py-12 px-4" style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", overflowY: "auto" }}>
+            <div className="p-8 w-full max-w-md rounded-2xl overflow-hidden" style={{ background: "rgba(12,12,16,0.97)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.07)", boxShadow: "0 0 40px rgba(0,0,0,0.4)", margin: "auto" }}>
               <h2 className="font-anton text-2xl uppercase text-text mb-6">
                 New <span className="text-blue">Request.</span>
               </h2>

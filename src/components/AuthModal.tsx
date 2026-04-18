@@ -220,16 +220,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     <div
       ref={backdropRef}
       onClick={handleBackdropClick}
-      className="fixed inset-0 z-[200] hidden items-center justify-center px-6"
+      className="fixed inset-0 z-[200] hidden flex px-6 py-12"
       style={{
         background: "radial-gradient(ellipse at center, rgba(0,112,243,0.06) 0%, rgba(0,0,0,0.85) 100%)",
         backdropFilter: "blur(12px)",
         WebkitBackdropFilter: "blur(12px)",
         perspective: "1200px",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
         overflowY: "auto",
       }}
     >
@@ -252,7 +248,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       <div
         ref={cardRef}
         className="relative w-full max-w-md"
-        style={{ transformStyle: "preserve-3d" }}
+        style={{ transformStyle: "preserve-3d", margin: "auto" }}
       >
         {/* Fluid water-light border — 3 layers drifting at different speeds */}
         <div className="absolute -inset-[1px] overflow-hidden opacity-30">
