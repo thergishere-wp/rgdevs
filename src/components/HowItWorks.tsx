@@ -72,8 +72,8 @@ export default function HowItWorks() {
   return (
     <section
       id="how"
-      className="relative z-10"
-      style={{ padding: "140px 32px", borderTop: "1px solid var(--line)" }}
+      className="section-pad relative z-10"
+      style={{ borderTop: "1px solid var(--line)" }}
     >
       <div className="max-w-[1280px] mx-auto">
         {/* Header */}
@@ -238,18 +238,9 @@ export default function HowItWorks() {
           </div>
 
           {/* Pipeline stats */}
-          <div
-            className="mt-16 grid grid-cols-2 md:grid-cols-4"
-            style={{ border: "1px solid var(--line)" }}
-          >
+          <div className="mt-16 pipeline-stats-grid">
             {pipelineStats.map((stat, i) => (
-              <div
-                key={i}
-                className="p-7"
-                style={{
-                  borderRight: i < pipelineStats.length - 1 ? "1px solid var(--line)" : "none",
-                }}
-              >
+              <div key={i} className="pipeline-stat-cell">
                 <div
                   style={{
                     fontFamily: "var(--font-space-grotesk), sans-serif",

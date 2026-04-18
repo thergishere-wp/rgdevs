@@ -56,8 +56,8 @@ export default function WhySubscription() {
   return (
     <section
       id="benefits"
-      className="relative z-10"
-      style={{ padding: "140px 32px", borderTop: "1px solid var(--line)" }}
+      className="section-pad relative z-10"
+      style={{ borderTop: "1px solid var(--line)" }}
     >
       <div className="max-w-[1280px] mx-auto">
         {/* Header */}
@@ -107,12 +107,7 @@ export default function WhySubscription() {
         {/* Comparison grid */}
         <div
           ref={(el) => { revealRefs.current[1] = el; }}
-          className="mt-16 opacity-0 translate-y-7 transition-all duration-700 delay-100 relative grid grid-cols-1 md:grid-cols-2"
-          style={{
-            gap: "1px",
-            background: "var(--line)",
-            border: "1px solid var(--line)",
-          }}
+          className="compare-grid mt-16 opacity-0 translate-y-7 transition-all duration-700 delay-100 relative"
         >
           {/* VS badge */}
           <div

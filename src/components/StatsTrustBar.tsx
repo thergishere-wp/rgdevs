@@ -40,9 +40,8 @@ export default function StatsTrustBar() {
     <section
       ref={sectionRef}
       id="trust"
-      className="relative z-10"
+      className="relative z-10 px-5 py-10 md:px-8 md:py-14"
       style={{
-        padding: "56px 32px",
         borderTop: "1px solid rgba(0,245,255,0.18)",
         borderBottom: "1px solid rgba(0,245,255,0.18)",
         background: "linear-gradient(to right, transparent, rgba(0,245,255,0.03), transparent)",

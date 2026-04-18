@@ -101,10 +101,11 @@ function TierCard({ tier }: { tier: PricingTier }) {
 
   return (
     <div
-      className="relative flex flex-col cursor-pointer"
-      style={{ perspective: "1400px", minHeight: "480px" }}
+      className="tier-card-wrap relative flex flex-col cursor-pointer"
+      style={{ perspective: "1400px" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={() => setHovered((v) => !v)}
     >
       {tier.featured && (
         <div
@@ -372,8 +373,8 @@ export default function Pricing() {
   return (
     <section
       id="pricing"
-      className="relative z-10"
-      style={{ padding: "140px 32px", borderTop: "1px solid var(--line)" }}
+      className="section-pad relative z-10"
+      style={{ borderTop: "1px solid var(--line)" }}
     >
       <div className="max-w-[1280px] mx-auto">
         {/* Header row */}

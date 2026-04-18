@@ -45,11 +45,8 @@ function ExternalIcon() {
 export default function Footer() {
   return (
     <footer
-      className="relative z-10"
-      style={{
-        borderTop: "1px solid rgba(0,245,255,0.18)",
-        padding: "72px 32px 80px",
-      }}
+      className="relative z-10 px-5 pt-14 pb-16 md:px-8 md:pt-20 md:pb-24"
+      style={{ borderTop: "1px solid rgba(0,245,255,0.18)" }}
     >
       {/* Top glow line */}
       <div
@@ -60,10 +57,7 @@ export default function Footer() {
         aria-hidden="true"
       />
 
-      <div
-        className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 items-start"
-        style={{ gridTemplateColumns: "1.3fr 1fr 1.1fr" }}
-      >
+      <div className="footer-grid max-w-[1280px] mx-auto items-start">
         {/* Brand column */}
         <div>
           <div className="flex items-center gap-3 mb-5">

@@ -127,11 +127,8 @@ export default function WhatWeBuild() {
   return (
     <section
       id="build"
-      className="relative z-10"
-      style={{
-        padding: "140px 32px",
-        borderTop: "1px solid var(--line)",
-      }}
+      className="section-pad relative z-10"
+      style={{ borderTop: "1px solid var(--line)" }}
     >
       <div className="max-w-[1280px] mx-auto">
         {/* Header */}
@@ -190,24 +187,14 @@ export default function WhatWeBuild() {
         </div>
 
         {/* Grid */}
-        <div
-          className="mt-16"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(12, 1fr)",
-            gap: "1px",
-            background: "var(--line)",
-            border: "1px solid var(--line)",
-          }}
-        >
+        <div className="build-grid mt-16">
           {services.map((svc, i) => (
             <article
               key={i}
               ref={(el) => { revealRefs.current[i + 1] = el; }}
-              className="opacity-0 translate-y-7 transition-all duration-700 group cursor-pointer"
+              className={`opacity-0 translate-y-7 transition-all duration-700 group cursor-pointer ${svc.span === "6" ? "build-span-6" : "build-span-4"}`}
               style={{
                 background: "var(--surface)",
-                gridColumn: `span ${svc.span || "4"}`,
                 padding: "32px 28px 28px",
                 position: "relative",
                 minHeight: "340px",

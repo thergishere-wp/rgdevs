@@ -162,8 +162,8 @@ export default function Portfolio() {
   return (
     <section
       id="work"
-      className="relative z-10"
-      style={{ padding: "140px 32px", borderTop: "1px solid var(--line)" }}
+      className="section-pad relative z-10"
+      style={{ borderTop: "1px solid var(--line)" }}
     >
       <div className="max-w-[1280px] mx-auto">
         {/* Header */}

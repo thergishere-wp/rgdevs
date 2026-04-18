@@ -57,8 +57,8 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="relative z-10"
-      style={{ padding: "140px 32px", borderTop: "1px solid var(--line)" }}
+      className="section-pad relative z-10"
+      style={{ borderTop: "1px solid var(--line)" }}
     >
       <div className="max-w-[1280px] mx-auto">
         {/* Eyebrow */}
@@ -113,20 +113,9 @@ export default function Contact() {
             </p>
 
             {/* Meta grid */}
-            <div
-              className="mt-12 grid grid-cols-2"
-              style={{
-                gap: "1px",
-                background: "var(--line)",
-                border: "1px solid var(--line)",
-              }}
-            >
+            <div className="contact-meta-grid">
               {contactMeta.map((m, i) => (
-                <div
-                  key={i}
-                  className="p-5"
-                  style={{ background: "var(--surface)" }}
-                >
+                <div key={i} className="contact-meta-cell">
                   <div
                     style={{
                       fontFamily: "var(--font-jetbrains), monospace",
@@ -138,17 +127,7 @@ export default function Contact() {
                   >
                     {m.key}
                   </div>
-                  <div
-                    className="mt-2"
-                    style={{
-                      fontFamily: "var(--font-space-grotesk), sans-serif",
-                      fontSize: "18px",
-                      color: "var(--text)",
-                      letterSpacing: "-0.01em",
-                    }}
-                  >
-                    {m.value}
-                  </div>
+                  <div className="contact-meta-val">{m.value}</div>
                 </div>
               ))}
             </div>
