@@ -352,7 +352,7 @@ function TierCard({ tier }: { tier: PricingTier }) {
 
 export default function Pricing() {
   const revealRefs = useRef<(HTMLElement | null)[]>([]);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
