@@ -116,20 +116,17 @@ export default function Hero() {
           if (scrollCueRef.current)
             scrollCueRef.current.style.opacity = clamp(1 - phaseA * 3).toString();
 
-          // Counter-scale text so it stays sharp
-          const counter = 1 / scaleA;
-
           // Phase B: content swap t1 → t2
           const phaseB = clamp((pe - 0.35) / 0.45);
           const phaseBe = easeOut(phaseB);
 
           if (t1Ref.current) {
-            const t1Scale = counter * (1 + phaseBe * 0.2);
+            const t1Scale = 1 + phaseBe * 0.2;
             t1Ref.current.style.transform = `scale(${t1Scale.toFixed(4)})`;
             t1Ref.current.style.opacity = clamp(1 - phaseB * 2.2).toString();
           }
           if (t2Ref.current) {
-            const t2Scale = counter * (0.88 + phaseBe * 0.32);
+            const t2Scale = 0.88 + phaseBe * 0.32;
             t2Ref.current.style.transform = `scale(${t2Scale.toFixed(4)})`;
             t2Ref.current.style.opacity = clamp((phaseB - 0.05) * 2.2).toString();
           }
