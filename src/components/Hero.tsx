@@ -120,13 +120,17 @@ export default function Hero() {
           const phaseB = clamp((pe - 0.35) / 0.45);
           const phaseBe = easeOut(phaseB);
 
+          // Partial counter-scale: content zooms in with the monitor but caps at 2.5×
+          // so it stays immersive on desktop without overflowing on mobile
+          const contentFactor = Math.min(1, 2.5 / scaleA);
+
           if (t1Ref.current) {
-            const t1Scale = 1 + phaseBe * 0.2;
+            const t1Scale = contentFactor * (1 + phaseBe * 0.2);
             t1Ref.current.style.transform = `scale(${t1Scale.toFixed(4)})`;
             t1Ref.current.style.opacity = clamp(1 - phaseB * 2.2).toString();
           }
           if (t2Ref.current) {
-            const t2Scale = 0.88 + phaseBe * 0.32;
+            const t2Scale = contentFactor * (0.88 + phaseBe * 0.32);
             t2Ref.current.style.transform = `scale(${t2Scale.toFixed(4)})`;
             t2Ref.current.style.opacity = clamp((phaseB - 0.05) * 2.2).toString();
           }

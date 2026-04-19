@@ -106,6 +106,7 @@ const services: Service[] = [
 
 export default function WhatWeBuild() {
   const revealRefs = useRef<(HTMLElement | null)[]>([]);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -122,6 +123,36 @@ export default function WhatWeBuild() {
     );
     revealRefs.current.forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
+  }, []);
+
+  // Auto-scroll loop on mobile only
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid || window.innerWidth >= 640) return;
+
+    let paused = false;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const pause = () => { paused = true; clearTimeout(timer); timer = setTimeout(() => { paused = false; }, 3000); };
+    grid.addEventListener("touchstart", pause, { passive: true });
+    grid.addEventListener("touchend", pause, { passive: true });
+
+    const tick = () => {
+      if (!paused) {
+        const cards = grid.querySelectorAll<HTMLElement>(".build-span-4, .build-span-6");
+        if (!cards.length) return;
+        const cardW = cards[0].offsetWidth + 1;
+        const maxScroll = grid.scrollWidth - grid.clientWidth;
+        const next = grid.scrollLeft + cardW > maxScroll - 10
+          ? 0
+          : grid.scrollLeft + cardW;
+        grid.scrollTo({ left: next, behavior: "smooth" });
+      }
+      timer = setTimeout(tick, 3200);
+    };
+
+    timer = setTimeout(tick, 3200);
+    return () => { clearTimeout(timer); grid.removeEventListener("touchstart", pause); grid.removeEventListener("touchend", pause); };
   }, []);
 
   return (
@@ -187,7 +218,7 @@ export default function WhatWeBuild() {
         </div>
 
         {/* Grid */}
-        <div className="build-grid mt-16">
+        <div ref={gridRef} className="build-grid mt-16">
           {services.map((svc, i) => (
             <article
               key={i}

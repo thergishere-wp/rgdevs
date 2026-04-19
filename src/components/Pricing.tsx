@@ -352,6 +352,7 @@ function TierCard({ tier }: { tier: PricingTier }) {
 
 export default function Pricing() {
   const revealRefs = useRef<(HTMLElement | null)[]>([]);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -368,6 +369,32 @@ export default function Pricing() {
     );
     revealRefs.current.forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
+  }, []);
+
+  // Auto-scroll loop on mobile only
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid || window.innerWidth >= 768) return;
+
+    let paused = false;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const pause = () => { paused = true; clearTimeout(timer); timer = setTimeout(() => { paused = false; }, 3000); };
+    grid.addEventListener("touchstart", pause, { passive: true });
+    grid.addEventListener("touchend", pause, { passive: true });
+
+    const tick = () => {
+      if (!paused) {
+        const cardW = (grid.querySelector<HTMLElement>(":scope > *")?.offsetWidth ?? 0) + 1;
+        const maxScroll = grid.scrollWidth - grid.clientWidth;
+        const next = grid.scrollLeft + cardW > maxScroll - 10 ? 0 : grid.scrollLeft + cardW;
+        grid.scrollTo({ left: next, behavior: "smooth" });
+      }
+      timer = setTimeout(tick, 3200);
+    };
+
+    timer = setTimeout(tick, 3200);
+    return () => { clearTimeout(timer); grid.removeEventListener("touchstart", pause); grid.removeEventListener("touchend", pause); };
   }, []);
 
   return (
@@ -448,6 +475,7 @@ export default function Pricing() {
         {/* Tier cards */}
         <div
           ref={(el) => { revealRefs.current[1] = el; }}
+          ref={gridRef}
           className="pricing-grid mt-16 opacity-0 translate-y-7 transition-all duration-700 delay-150"
         >
           {tiers.map((tier, i) => (
