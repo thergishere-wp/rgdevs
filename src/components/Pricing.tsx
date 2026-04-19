@@ -448,12 +448,7 @@ export default function Pricing() {
         {/* Tier cards */}
         <div
           ref={(el) => { revealRefs.current[1] = el; }}
-          className="mt-16 opacity-0 translate-y-7 transition-all duration-700 delay-150 grid grid-cols-1 md:grid-cols-3"
-          style={{
-            gap: "1px",
-            border: "1px solid var(--line)",
-            background: "var(--line)",
-          }}
+          className="pricing-grid mt-16 opacity-0 translate-y-7 transition-all duration-700 delay-150"
         >
           {tiers.map((tier, i) => (
             <div

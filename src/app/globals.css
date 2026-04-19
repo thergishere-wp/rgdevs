@@ -77,26 +77,40 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 /* ─── WhatWeBuild 12-col responsive grid ────────────── */
 .build-grid {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
   gap: 1px;
   background: var(--line);
-  border: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  scrollbar-width: none;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 20px;
 }
+.build-grid::-webkit-scrollbar { display: none; }
+.build-span-4 { flex: 0 0 78vw; scroll-snap-align: start; }
+.build-span-6 { flex: 0 0 82vw; scroll-snap-align: start; }
+/* Padding after last card so it snaps cleanly */
+.build-span-6:last-child { margin-right: 20px; }
 @media (min-width: 640px) {
-  .build-grid { grid-template-columns: repeat(2, 1fr); }
+  .build-grid {
+    display: grid; overflow-x: unset; scroll-snap-type: unset;
+    grid-template-columns: repeat(2, 1fr);
+    margin-left: 0; margin-right: 0; padding-left: 0;
+    border: 1px solid var(--line);
+  }
+  .build-span-4, .build-span-6 { flex: unset; scroll-snap-align: unset; }
+  .build-span-6:last-child { margin-right: 0; }
 }
 @media (min-width: 1024px) {
   .build-grid { grid-template-columns: repeat(12, 1fr); }
   .build-span-4 { grid-column: span 4; }
   .build-span-6 { grid-column: span 6; }
   .build-span-12 { grid-column: span 12; }
-}
-/* Override: always full-width below lg */
-@media (max-width: 1023px) {
-  .build-span-4,
-  .build-span-6,
-  .build-span-12 { grid-column: span 1; }
 }
 
 /* ─── Pipeline stats 4-col ──────────────────────────── */
@@ -136,6 +150,41 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 @media (min-width: 768px) {
   .tier-card-wrap { min-height: 540px; }
+}
+
+/* ─── Pricing tier grid — horizontal scroll on mobile ── */
+.pricing-grid {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  gap: 1px;
+  background: var(--line);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  scrollbar-width: none;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 20px;
+}
+.pricing-grid::-webkit-scrollbar { display: none; }
+.pricing-grid > * {
+  flex: 0 0 80vw;
+  scroll-snap-align: start;
+}
+.pricing-grid > *:last-child { margin-right: 20px; }
+@media (min-width: 768px) {
+  .pricing-grid {
+    display: grid;
+    overflow-x: unset;
+    scroll-snap-type: unset;
+    grid-template-columns: repeat(3, 1fr);
+    margin-left: 0; margin-right: 0; padding-left: 0;
+    border: 1px solid var(--line);
+  }
+  .pricing-grid > * { flex: unset; scroll-snap-align: unset; }
+  .pricing-grid > *:last-child { margin-right: 0; }
 }
 
 /* ─── Compare grid responsive ───────────────────────── */
@@ -181,14 +230,15 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .contact-meta-val {
   font-family: var(--font-space-grotesk), sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--text);
   letter-spacing: -0.01em;
   margin-top: 8px;
-  word-break: break-all;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 @media (min-width: 640px) {
-  .contact-meta-val { font-size: 18px; word-break: normal; }
+  .contact-meta-val { font-size: 18px; }
 }
 
 /* ─── Comparison column row grid ─────────────────────── */
